@@ -20,15 +20,21 @@ importers:
       '@codemirror/lang-javascript':
         specifier: ^6.2.2
         version: 6.2.2
+      '@codemirror/language':
+        specifier: 6.10.8
+        version: 6.10.8
       '@codemirror/search':
         specifier: ^6.5.6
         version: 6.5.8
       '@codemirror/state':
-        specifier: ^6.4.1
+        specifier: ^6.5.1
         version: 6.5.1
       '@codemirror/theme-one-dark':
         specifier: ^6.1.2
         version: 6.1.2
+      '@codemirror/view':
+        specifier: 6.36.2
+        version: 6.36.2
       '@gsap/react':
         specifier: ^2.1.1
         version: 2.1.2(gsap@3.12.7)(react@18.3.1)
