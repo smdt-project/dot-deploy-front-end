@@ -15,82 +15,87 @@ import HomePage from "./pages/home/HomePage";
 import DotCodeProfile from "./pages/profile/DotCodeProfile";
 import ProfilePage from "./pages/profile/ProfilePage";
 import Notifier from "./ui/Notifier";
+import TeamsPage from "../client/src/pages/Teams/TeamsPage";
 
 function CommonComponent() {
-	return (
-		<>
-			<Notifier />
-			<Outlet />
-		</>
-	);
+  return (
+    <>
+      <Notifier />
+      <Outlet />
+    </>
+  );
 }
 
 const router = createBrowserRouter([
-	{
-		element: <CommonComponent />,
-		children: [
-			{
-				path: "/",
-				element: <HomePage />,
-			},
-			{
-				path: "/editor",
-				element: <EditorPage />,
-				children: [
-					{
-						path: "/editor/code",
-						element: <EditorCodeBox />,
-					},
-					{
-						path: "/editor/dotcode",
-						element: <DotCodeProfile />,
-					},
-				],
-			},
-			{
-				path: "/community",
-				element: <CommunityPage />,
-				children: [
-					{
-						path: "project/:id",
-						element: <ProjectDetail />,
-					},
-					{
-						path: "post/:id",
-						element: <PostDetail />,
-					},
-					{
-						path: "",
-						element: <CommunityBody />,
-					},
-				],
-			},
-			{
-				path: "/signup",
-				element: <SignUp />,
-			},
-			{
-				path: "/login",
-				element: <SignIn />,
-			},
-			{
-				path: "/profile/:userId",
-				element: <ProfilePage />,
-			},
-		],
-	},
+  {
+    element: <CommonComponent />,
+    children: [
+      {
+        path: "/",
+        element: <HomePage />,
+      },
+      {
+        path: "/teams",
+        element: <TeamsPage />,
+      },
+      {
+        path: "/editor",
+        element: <EditorPage />,
+        children: [
+          {
+            path: "/editor/code",
+            element: <EditorCodeBox />,
+          },
+          {
+            path: "/editor/dotcode",
+            element: <DotCodeProfile />,
+          },
+        ],
+      },
+      {
+        path: "/community",
+        element: <CommunityPage />,
+        children: [
+          {
+            path: "project/:id",
+            element: <ProjectDetail />,
+          },
+          {
+            path: "post/:id",
+            element: <PostDetail />,
+          },
+          {
+            path: "",
+            element: <CommunityBody />,
+          },
+        ],
+      },
+      {
+        path: "/signup",
+        element: <SignUp />,
+      },
+      {
+        path: "/login",
+        element: <SignIn />,
+      },
+      {
+        path: "/profile/:userId",
+        element: <ProfilePage />,
+      },
+    ],
+  },
 ]);
 
 const App = () => {
-	const dispatch = useDispatch();
-	const userData = getUserData();
-	useEffect(() => {
-		if (userData) {
-			dispatch(authStatus({ isUserSignedIn: true, userData: userData }));
-			dispatch(userDataRequest());
-		}
-	}, [dispatch, userData]);
-	return <RouterProvider router={router} />;
+  const dispatch = useDispatch();
+  const userData = getUserData();
+  useEffect(() => {
+    if (userData) {
+      dispatch(authStatus({ isUserSignedIn: true, userData: userData }));
+      dispatch(userDataRequest());
+    }
+  }, [dispatch, userData]);
+  return <RouterProvider router={router} />;
 };
 
 export default App;
