@@ -11,6 +11,7 @@ import UserComments from "./UserComments";
 import UserPosts from "./UserPosts";
 import UserProfileSidebar from "./UserProfileSidebar";
 import UserProjects from "./UserProjects";
+import UserTeams from "./UserTeams";
 
 const ProfilePage = () => {
 	const { userId } = useParams();
@@ -49,6 +50,7 @@ const ProfilePage = () => {
 								userData.projects.length,
 								userData.posts.length,
 								userData.comments.length,
+								3,
 							]}
 						/>
 						<div className="w-full overflow-x-hidden overflow-y-scroll h-[58.5dvh] sm:h-[98dvh] small-scroll mt-3 sd:mt-7 mb-1">
@@ -62,6 +64,8 @@ const ProfilePage = () => {
 							{currTab === "comments" && (
 								<UserComments isLoggedInUser={isLoggedInUser} />
 							)}
+							{currTab === "teams" && (
+								<UserTeams isLoggedInUser={isLoggedInUser} />)}
 						</div>
 					</div>
 				</div>

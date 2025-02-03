@@ -80,31 +80,31 @@ const Post = ({ post, isLoggedInUser }) => {
 											</div>
 										</div>
 									) : (
-										<>
-											<button
-												className="text-green-500 bg-slate-500 bg-opacity-40 px-1 py-[3px] rounded-md transition-all duration-300 hover:bg-green-500 hover:text-slate-50"
-												onClick={() => setIsEditing(true)}
-											>
-												<FaEdit size={14} />
-											</button>
-											<button
-												className="text-red-500 bg-slate-500 bg-opacity-40 p-[3px] rounded-md transition-all duration-300 hover:bg-red-500 hover:text-red-50"
-												onClick={() => setIsDeleting(true)}
-											>
-												<MdDelete />
-											</button>
-										</>
-									)}
+											<>
+												<button
+													className="text-green-500 bg-slate-500 bg-opacity-40 px-1 py-[3px] rounded-md transition-all duration-300 hover:bg-green-500 hover:text-slate-50"
+													onClick={() => setIsEditing(true)}
+												>
+													<FaEdit size={14} />
+												</button>
+												<button
+													className="text-red-500 bg-slate-500 bg-opacity-40 p-[3px] rounded-md transition-all duration-300 hover:bg-red-500 hover:text-red-50"
+													onClick={() => setIsDeleting(true)}
+												>
+													<MdDelete />
+												</button>
+											</>
+										)}
 								</div>
 							</div>
 						) : (
-							<button
-								className="self-start text-left text-wrap text-slate-200 font-semibold tracking-wide hover:underline hover:text-color-5"
-								onClick={() => detailPost()}
-							>
-								{post.title}
-							</button>
-						)}
+								<button
+									className="self-start text-left text-wrap text-slate-200 font-semibold tracking-wide hover:underline hover:text-color-5"
+									onClick={() => detailPost()}
+								>
+									{post.title}
+								</button>
+							)}
 						<span className="text-slate-300 text-sm">{post.description}</span>
 					</div>
 					<div className="w-full flex items-center justify-between">
@@ -118,8 +118,8 @@ const Post = ({ post, isLoggedInUser }) => {
 							<div className="flex items-center text-slate-400 border-[1px] border-slate-700  rounded-md bg-slate-800 bg-opacity-80">
 								<div
 									className={`px-2 py-[3px]  rounded-l-md transition-all duration-300 ${
-										isLiked ? "text-color-2 bg-slate-700" : ""
-									}`}
+isLiked ? "text-color-2 bg-slate-700" : ""
+}`}
 								>
 									{isLiked ? <BiSolidLike /> : <BiLike />}
 								</div>
@@ -130,10 +130,10 @@ const Post = ({ post, isLoggedInUser }) => {
 							<div className="flex items-center text-slate-400 border-[1px] border-slate-700  rounded-md bg-slate-800 bg-opacity-80">
 								<button
 									className={`px-2 py-[3px]  rounded-l-md transition-all duration-300 ${
-										showComment
-											? "text-blue-500 bg-slate-700"
-											: "hover:bg-slate-700 hover:text-blue-500"
-									}`}
+showComment
+? "text-blue-500 bg-slate-700"
+: "hover:bg-slate-700 hover:text-blue-500"
+}`}
 									onClick={() => setShowComment((isShown) => !isShown)}
 								>
 									{showComment ? <BiSolidComment /> : <BiComment />}
@@ -185,36 +185,36 @@ const UserPosts = ({ isLoggedInUser }) => {
 			))}
 		</div>
 	) : (
-		<div className="flex flex-col items-center justify-center gap-3 w-full h-full pb-40">
-			{isLoggedInUser ? (
-				<>
-					{isPosting && <PostModal setIsPosting={setIsPosting} />}
+			<div className="flex flex-col items-center justify-center gap-3 w-full h-full pb-40">
+				{isLoggedInUser ? (
+					<>
+						{isPosting && <PostModal setIsPosting={setIsPosting} />}
 
-					<span className="text-slate-300 text-lg">
-						You have no post yet, create and share to the community
-					</span>
-					<button
-						className="text-slate-300 bg-slate-700 bg-opacity-60 px-4 py-2 rounded-full transition-all duration-300 hover:text-slate-50 hover:bg-opacity-80"
-						onClick={() => setIsPosting(true)}
-					>
-						Create Post now
-					</button>
-				</>
-			) : (
-				<>
-					<span className="text-slate-300 font-semibold tracking-wide text-lg">
-						User has no posts yet.
-					</span>
-					<NavLink
-						to={"/community"}
-						className="text-slate-400 hover:text-slate-300 hover:underline hover:underline-offset-2"
-					>
-						check community
-					</NavLink>
-				</>
-			)}
-		</div>
-	);
+						<span className="text-slate-300 text-lg">
+							You have no post yet, create and share to the community
+						</span>
+						<button
+							className="text-slate-300 bg-slate-700 bg-opacity-60 px-4 py-2 rounded-full transition-all duration-300 hover:text-slate-50 hover:bg-opacity-80"
+							onClick={() => setIsPosting(true)}
+						>
+							Create Post now
+						</button>
+					</>
+				) : (
+						<>
+							<span className="text-slate-300 font-semibold tracking-wide text-lg">
+								User has no posts yet.
+							</span>
+							<NavLink
+								to={"/community"}
+								className="text-slate-400 hover:text-slate-300 hover:underline hover:underline-offset-2"
+							>
+								check community
+							</NavLink>
+						</>
+					)}
+			</div>
+		);
 };
 
 export default UserPosts;
