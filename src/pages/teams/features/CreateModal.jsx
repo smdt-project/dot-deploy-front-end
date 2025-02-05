@@ -18,7 +18,7 @@ const CreateModal = ({
 
 		try {
 			await new Promise((resolve) => setTimeout(resolve, 1500));
-			setTeams((prevTeams) => [...prevTeams, { id: prevTeams.length + 1, name, description }]);
+			setTeams((prevTeams) => [...prevTeams, { id: prevTeams.length + 1, name, description, members: 1 }]);
 			setName("");
 			setDescription("");
 			onClose();
