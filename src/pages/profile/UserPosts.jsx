@@ -19,8 +19,7 @@ const Post = ({ post, isLoggedInUser }) => {
 	const comments = post.comments;
 	const likes = post.likes;
 
-	const isLiked = isUserSignedIn
-		? isCurrUserLiked(post.likes, user.userId)
+	const isLiked = isUserSignedIn ? isCurrUserLiked(post.likes, user.userId)
 		: false;
 
 	const navigateTo = useNavigate();
