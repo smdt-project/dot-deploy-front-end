@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { BiTerminal } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { GiHelp } from "react-icons/gi";
@@ -9,6 +9,9 @@ import {
 	TbSettings,
 	TbWorld,
 } from "react-icons/tb";
+import {
+	IoIosGitBranch,
+} from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import EditorToolTip from "../../../../ui/EditorToolTip";
@@ -51,19 +54,19 @@ const SidebarTab = ({ tab }) => {
 	return (
 		<div
 			className={`relative ${
-				tab.isBtn ? "sm:hidden flex" : "flex"
-			} items-center justify-center w-full `}
+tab.isBtn ? "sm:hidden flex" : "flex"
+} items-center justify-center w-full `}
 		>
 			<button
 				className={`w-full h-10 flex items-center justify-center  transition-all duration-300 border-l-2  ${
-					tab.isDisabled
-						? "text-slate-500 hover:text-n-3"
-						: "text-slate-400 hover:text-n-1"
-				}   ${
-					tab.name === selectedTab && !tab.isDisabled
-						? "border-l-2 border-n-1 text-n-1"
-						: "border-[#353b47]"
-				}`}
+tab.isDisabled
+? "text-slate-500 hover:text-n-3"
+: "text-slate-400 hover:text-n-1"
+}   ${
+tab.name === selectedTab && !tab.isDisabled
+? "border-l-2 border-n-1 text-n-1"
+: "border-[#353b47]"
+}`}
 				onClick={() => handleClick(tab.name)}
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
@@ -83,7 +86,12 @@ const EditorSidebar = () => {
 	const { isCreating, isPublishing } = useSelector((state) => state.editor);
 	const { user, isUserSignedIn } = useSelector((state) => state.auth);
 	const { project } = useSelector((state) => state.project);
-
+	// const versions = [
+	// 	{ version: "v1.0.3", message: "Fixed sidebar bug" },
+	// 	{ version: "v1.0.2", message: "Improved performance" },
+	// 	{ version: "v1.0.1", message: "Added search feature" },
+	// 	{ version: "v1.0.0", message: "Initial release" },
+	// ];
 	return (
 		<div className="h-full w-10 flex flex-col items-center bg-[#353b47] text-2xl sm:pb-2 border-r-[1px] border-slate-500">
 			{[
@@ -109,6 +117,13 @@ const EditorSidebar = () => {
 					isLink: true,
 					isBtn: true,
 				},
+				// {
+				// 	icon: <IoIosGitBranch key={9}/>,
+				// 	name: "version",
+				// 	title: "Versions",
+				// 	isLink: true,
+				// 	isBtn: true,
+				// },
 				{
 					icon: <TbSettings key={3} />,
 					name: "setting",
@@ -147,12 +162,15 @@ const EditorSidebar = () => {
 					link: `${isUserSignedIn ? `/profile/${user.userId}` : "/login"}`,
 				},
 			].map((tab, index) =>
-				tab ? (
-					<SidebarTab tab={tab} index={index} key={index} />
-				) : (
-					<Spacer key={index} />
-				)
-			)}
+					tab ? (
+						<SidebarTab tab={tab} index={index} key={index} />
+					) : (
+							<Spacer key={index} />
+						)
+				)}
+			<div className="w-full flex flex-col items-center mt-4 border-t border-slate-600 pt-2">
+				<IoIosGitBranch title="Versions" className="cursor-pointer text-slate-400 hover:text-slate-100" />
+			</div>
 		</div>
 	);
 };
