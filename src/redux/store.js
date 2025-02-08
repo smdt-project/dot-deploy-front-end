@@ -13,6 +13,7 @@ import sidebarReducer from "../pages/editor/features/sidebar/sidebarSlice";
 import projectReducer from "../pages/editor/projectSlice";
 import profileReducer from "../pages/profile/profileSlice";
 import notifierReducer from "../ui/notifierSlice";
+import teamsReducer from '../pages/teams/teamsSlice'
 export const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
@@ -23,6 +24,7 @@ const store = configureStore({
 		notifier: notifierReducer,
 		post: postReducer,
 		profile: profileReducer,
+		teams:teamsReducer,
 		project: projectReducer,
 		setting: settingReducer,
 		sidebar: sidebarReducer,

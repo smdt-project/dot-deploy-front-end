@@ -72,6 +72,7 @@ const UserProfileSidebar = ({ user, isLoggedInUser }) => {
 					user.projects.length,
 					user.posts.length,
 					user.comments.length,
+					3,
 				]}
 			/>
 		</div>
