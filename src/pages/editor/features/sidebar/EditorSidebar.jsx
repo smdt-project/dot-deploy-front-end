@@ -158,9 +158,9 @@ const EditorSidebar = () => {
           <SidebarTab tab={tab} index={index} key={index} />
         ) : (
           <Spacer key={index} />
-        ),
+        )
       )}
-         </div>
+    </div>
   );
 };
 

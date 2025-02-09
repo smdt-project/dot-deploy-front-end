@@ -36,7 +36,7 @@ export const useEditorOpen = () => {
           updateSelectedLng({
             code: latestCode.code,
             lng: project.lngName,
-          }),
+          })
         );
         if (project.lngName === "react") {
           dispatch(setOutputTerminal(true));
@@ -52,7 +52,7 @@ export const useEditorOpen = () => {
         setCurrProject({
           isNew: true,
           project: project,
-        }),
+        })
       );
       if (type === "ui") {
         dispatch(setOutputTerminal(true));
@@ -74,8 +74,8 @@ export const useEditorOpen = () => {
         JSON.stringify({
           type: "info",
           info: JSON.stringify(project, null, 2),
-        }),
-      ),
+        })
+      )
     );
 
     dispatch(handleTerminal(true));

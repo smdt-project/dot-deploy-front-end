@@ -9,7 +9,6 @@ const Versions = () => {
       <div className="p-4 text-slate-400 text-sm">No versions available.</div>
     );
   }
-
   return (
     <div className="p-4 text-slate-300">
       <h2 className="text-sm uppercase text-slate-500 mb-4">Versions</h2>
