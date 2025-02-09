@@ -17,10 +17,12 @@ import {
   setCurrProject,
   updateSelectedLng,
 } from "../pages/editor/projectSlice";
+import { useSelector } from "react-redux";
 
 export const useEditorOpen = () => {
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
+  const { latestCode } = useSelector((state) => state.project);
 
   const openEditor = (type, lngName, project) => {
     dispatch(resetEditor());
@@ -32,7 +34,7 @@ export const useEditorOpen = () => {
       if (project.type === "snippet") {
         dispatch(
           updateSelectedLng({
-            code: project.code[0]?.code,
+            code: latestCode.code,
             lng: project.lngName,
           }),
         );
@@ -42,9 +44,7 @@ export const useEditorOpen = () => {
           dispatch(setOutputTerminal(false));
         }
       } else {
-        dispatch(
-          updateSelectedLng({ code: project.code[0]?.html, lng: "html" }),
-        );
+        dispatch(updateSelectedLng({ code: latestCode.html, lng: "html" }));
         dispatch(setOutputTerminal(true));
       }
     } else {
@@ -56,18 +56,14 @@ export const useEditorOpen = () => {
       );
       if (type === "ui") {
         dispatch(setOutputTerminal(true));
-        dispatch(
-          updateSelectedLng({ code: project.code[0]?.html, lng: "html" }),
-        );
+        dispatch(updateSelectedLng({ code: latestCode.html, lng: "html" }));
       } else {
         if (lngName === "react") {
           dispatch(setOutputTerminal(true));
         } else {
           dispatch(setOutputTerminal(false));
         }
-        dispatch(
-          updateSelectedLng({ code: project.code[0]?.code, lng: lngName }),
-        );
+        dispatch(updateSelectedLng({ code: latestCode.code, lng: lngName }));
       }
     }
 
