@@ -105,7 +105,7 @@ const CodeBoxHeader = ({ lngName }) => {
 };
 
 const EditorCodeBox = () => {
-	const { project, currLng, currCode } = useSelector((state) => state.project);
+	const { project, currLng, latestCode, currCode } = useSelector((state) => state.project);
 	const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
 		useSelector((state) => state.editor);
 	const { autoSave, notifyInterval } = useSelector((state) => state.setting);
@@ -118,9 +118,9 @@ const EditorCodeBox = () => {
 	let jsCode = "";
 
 	if (!isSnippet) {
-		htmlCode = project.code.html;
-		cssCode = project.code.css;
-		jsCode = project.code.js;
+		htmlCode = latestCode.html;
+		cssCode = latestCode.css;
+		jsCode = latestCode.js;
 	}
 
 	const lng = currLng;

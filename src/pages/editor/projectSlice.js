@@ -14,6 +14,7 @@ const initialState = {
     type: "ui",
     lngName: "html",
   },
+  versions: [],
   currLng: "html",
   latestCode: {},
   currCode: "",
