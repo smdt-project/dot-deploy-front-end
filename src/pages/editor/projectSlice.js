@@ -3,13 +3,20 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   project: {
     name: "",
-    code: [],
+    code: [
+      {
+        html: "",
+        css: "",
+        js: "",
+        // , version: 1
+      },
+    ],
     type: "ui",
     lngName: "html",
   },
   currLng: "html",
+  latestCode: {},
   currCode: "",
-  selectedVersion: 0,
   isLoading: false,
   error: false,
   isNew: true,
@@ -21,41 +28,39 @@ const projectSlice = createSlice({
   reducers: {
     setCurrProject: (state, action) => {
       state.isNew = action.payload.isNew;
-      state.project = action.payload.project;
-      state.selectedVersion = action.payload.project.code.length - 1;
+      state.project = {
+        ...action.payload.project,
+        code: action.payload.project.code || initialState.project.code,
+      };
     },
     updateSnippetCode: (state, action) => {
-      const { html, css, js } = action.payload;
-      const versionIndex = state.selectedVersion;
-      if (state.project.code[versionIndex]) {
-        state.project.code[versionIndex] = {
-          ...state.project.code[versionIndex],
-          html: html || state.project.code[versionIndex].html,
-          css: css || state.project.code[versionIndex].css,
-          js: js || state.project.code[versionIndex].js,
-        };
-      }
+      state.project = {
+        ...state.project,
+        code: action.payload,
+      };
     },
     updateHTML: (state, action) => {
-      const versionIndex = state.selectedVersion;
-      if (state.project.code[versionIndex]) {
-        state.project.code[versionIndex].html = action.payload;
-      }
+      state.latestCode = {
+        ...state.latestCode,
+        html: action.payload,
+      };
     },
     updateCSS: (state, action) => {
-      const versionIndex = state.selectedVersion;
-      if (state.project.code[versionIndex]) {
-        state.project.code[versionIndex].css = action.payload;
-      }
+      state.latestCode = {
+        ...state.latestCode,
+        css: action.payload,
+      };
     },
     updateJS: (state, action) => {
-      const versionIndex = state.selectedVersion;
-      if (state.project.code[versionIndex]) {
-        state.project.code[versionIndex].js = action.payload;
-      }
+      state.latestCode = {
+        ...state.latestCode,
+        js: action.payload,
+      };
+    },
+    setLatestCode: (state, action) => {
+      state.project.latestCode = action.payload;
     },
     updateSelectedLng: (state, action) => {
-      console.log("smex", action.payload.code, state.selectedVersion);
       state.currCode = action.payload.code;
       state.currLng = action.payload.lng;
     },
@@ -66,11 +71,6 @@ const projectSlice = createSlice({
       state.isNew = initialState.isNew;
       state.error = initialState.error;
       state.isLoading = initialState.isLoading;
-      state.selectedVersion = initialState.selectedVersion;
-    },
-    setSelectedVersion: (state, action) => {
-      console.log(action.payload);
-      state.selectedVersion = action.payload;
     },
     updateProjectRequest: (state) => {
       state.isDone = false;
@@ -95,8 +95,8 @@ export const {
   updateHTML,
   updateJS,
   updateSelectedLng,
+  setLatestCode,
   resetCurrProject,
-  setSelectedVersion,
   updateProjectRequest,
   updateProjectSuccess,
   updateProjectFailure,

@@ -6,7 +6,6 @@ const UserName = ({
   onOwner,
   avatarClasses,
 }) => {
-  // console.log(projectName, name);
   return (
     <div className="flex gap-2">
       {avatarUrl ? (
@@ -27,7 +26,7 @@ const UserName = ({
               : "min-w-6 min-h-6 w-6 h-6 rounded-full"
           } flex items-center justify-center self-start rounded-full border-[1px] border-color-5 bg-color-7 text-slate-950 text-xl font-bold uppercase`}
         >
-          {name?.at(0)}
+          {name[0]}
         </div>
       )}
       <div className="text-slate-300">
