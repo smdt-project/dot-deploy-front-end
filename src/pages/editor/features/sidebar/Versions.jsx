@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 const Versions = () => {
   const { project } = useSelector((state) => state.project);
   const { code } = project;
-
+  console.log("from versions",project)
   if (!code || code.length === 0) {
     return (
       <div className="p-4 text-slate-400 text-sm">No versions available.</div>

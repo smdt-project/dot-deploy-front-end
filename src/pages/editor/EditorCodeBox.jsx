@@ -105,23 +105,25 @@ const CodeBoxHeader = ({ lngName }) => {
 };
 
 const EditorCodeBox = () => {
-	const { project, currLng, latestCode, currCode } = useSelector((state) => state.project);
-	const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
-		useSelector((state) => state.editor);
-	const { autoSave, notifyInterval } = useSelector((state) => state.setting);
-	const { lastSave, savedProject } = useSelector((state) => state.save);
-	const isSnippet = project.type === "snippet";
-	const hasCodeChanged = !isEqual(savedProject, project);
+  const { project, currLng, latestCode } = useSelector(
+    (state) => state.project,
+  );
+  const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
+    useSelector((state) => state.editor);
+  const { autoSave, notifyInterval } = useSelector((state) => state.setting);
+  const { lastSave, savedProject } = useSelector((state) => state.save);
+  const isSnippet = project.type === "snippet";
+  const hasCodeChanged = !isEqual(savedProject, project);
 
   let htmlCode = "";
   let cssCode = "";
   let jsCode = "";
 
-	if (!isSnippet) {
-		htmlCode = latestCode.html;
-		cssCode = latestCode.css;
-		jsCode = latestCode.js;
-	}
+  if (!isSnippet) {
+    htmlCode = latestCode.html;
+    cssCode = latestCode.css;
+    jsCode = latestCode.js;
+  }
 
   const selectedMode =
     lng === "react"
