@@ -15,7 +15,6 @@ import { selectMenu } from "../pages/editor/features/sidebar/sidebarSlice";
 import {
   resetCurrProject,
   setCurrProject,
-  setSelectedVersion,
   updateSelectedLng,
 } from "../pages/editor/projectSlice";
 import { useSelector } from "react-redux";
@@ -23,24 +22,20 @@ import { useSelector } from "react-redux";
 export const useEditorOpen = () => {
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
-  const { selectedVersion } = useSelector((state) => state.project);
 
   const openEditor = (type, lngName, project) => {
     dispatch(resetEditor());
     dispatch(resetCurrProject());
     dispatch(resetCreatingModal());
     dispatch(resetPublishingModal());
-    dispatch(setSelectedVersion(project.code.length - 1));
-    console.log(type, lngName, project);
-
     if (type === "open") {
       dispatch(setCurrProject({ isNew: false, project: project }));
       if (project.type === "snippet") {
         dispatch(
           updateSelectedLng({
-            code: project.code[selectedVersion - 1].code,
+            code: project.code[0]?.code,
             lng: project.lngName,
-          }),
+          })
         );
         if (project.lngName === "react") {
           dispatch(setOutputTerminal(true));
@@ -49,10 +44,7 @@ export const useEditorOpen = () => {
         }
       } else {
         dispatch(
-          updateSelectedLng({
-            code: project.code[selectedVersion - 1].html,
-            lng: "html",
-          }),
+          updateSelectedLng({ code: project.code[0]?.html, lng: "html" })
         );
         dispatch(setOutputTerminal(true));
       }
@@ -61,15 +53,12 @@ export const useEditorOpen = () => {
         setCurrProject({
           isNew: true,
           project: project,
-        }),
+        })
       );
       if (type === "ui") {
         dispatch(setOutputTerminal(true));
         dispatch(
-          updateSelectedLng({
-            code: project.code[selectedVersion - 1].html,
-            lng: "html",
-          }),
+          updateSelectedLng({ code: project.code[0]?.html, lng: "html" })
         );
       } else {
         if (lngName === "react") {
@@ -78,10 +67,7 @@ export const useEditorOpen = () => {
           dispatch(setOutputTerminal(false));
         }
         dispatch(
-          updateSelectedLng({
-            code: project.code[selectedVersion - 1].code,
-            lng: lngName,
-          }),
+          updateSelectedLng({ code: project.code[0]?.code, lng: lngName })
         );
       }
     }
@@ -93,9 +79,10 @@ export const useEditorOpen = () => {
         JSON.stringify({
           type: "info",
           info: JSON.stringify(project, null, 2),
-        }),
-      ),
+        })
+      )
     );
+
     dispatch(handleTerminal(true));
     dispatch(selectMenu({ name: "explore", title: "Explore" }));
     navigateTo("/editor/code");

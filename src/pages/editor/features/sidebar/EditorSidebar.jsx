@@ -102,35 +102,36 @@ const EditorSidebar = () => {
         },
         {
           icon: <IoIosGitBranch key={3} />,
-          name: "versions",
-          title: "Version Control",
+          name: "version",
+          title: "Versions",
           isDisabled: isCreating || isPublishing,
           isLink: false,
         },
         {
-          icon: <BiTerminal key={4} />,
+          icon: <BiTerminal key={3} />,
           name: "terminal",
           title: "Terminal",
           isDisabled: isCreating || isPublishing,
           isLink: true,
           isBtn: true,
         },
+
         {
-          icon: <TbSettings key={5} />,
+          icon: <TbSettings key={3} />,
           name: "setting",
           title: "Settings & Customizations",
           isDisabled: isCreating || isPublishing,
           isLink: false,
         },
         {
-          icon: <TbWorld size={25} key={6} />,
+          icon: <TbWorld size={25} key={4} />,
           name: "community",
           isDisabled: isPublishing,
           isLink: true,
           link: "/community",
         },
         {
-          icon: <TbInfoCircle key={7} />,
+          icon: <TbInfoCircle key={5} />,
           name: "about",
           isDisabled: isPublishing,
           isLink: true,
@@ -138,7 +139,7 @@ const EditorSidebar = () => {
         },
         0,
         {
-          icon: <GiHelp key={8} />,
+          icon: <GiHelp key={6} />,
           name: "help",
           isDisabled: isPublishing,
           isLink: true,
@@ -146,7 +147,7 @@ const EditorSidebar = () => {
           link: "/community",
         },
         {
-          icon: <CgProfile key={9} />,
+          icon: <CgProfile key={6} />,
           name: "profile",
           isDisabled: isPublishing,
           isLink: true,
@@ -157,7 +158,7 @@ const EditorSidebar = () => {
           <SidebarTab tab={tab} index={index} key={index} />
         ) : (
           <Spacer key={index} />
-        ),
+        )
       )}
     </div>
   );

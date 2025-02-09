@@ -19,7 +19,7 @@ import Error from "./Error";
 import Loading from "./Loading";
 
 const PublishModal = () => {
-	const { project, isNew } = useSelector((state) => state.project);
+	const { project, isNew, latestCode} = useSelector((state) => state.project);
 	const { isLoading, error, isPublishingDone } = useSelector(
 		(state) => state.save
 	);
@@ -96,7 +96,7 @@ const PublishModal = () => {
 			visibility: visibility,
 			type: project.type,
 			lngName: project.lngName,
-			code: project.code,
+			code: latestCode,
 			owner: user.userId,
 			tags: tags,
 		};

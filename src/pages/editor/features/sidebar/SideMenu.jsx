@@ -6,6 +6,7 @@ import Versions from "./Versions";
 
 const SideMenu = () => {
   const { currTab, currTabTitle } = useSelector((state) => state.sidebar);
+
   return (
     <div className="bg-[#22252d] h-full w-full flex flex-col">
       <div className="py-2 px-5 shadow-sm shadow-slate-700">
@@ -20,7 +21,7 @@ const SideMenu = () => {
       ) : currTab === "setting" ? (
         <Settings />
       ) : (
-        currTab === "versions" && <Versions />
+        currTab === "version" && <Versions />
       )}
     </div>
   );
