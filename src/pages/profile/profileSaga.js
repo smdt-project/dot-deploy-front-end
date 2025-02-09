@@ -84,12 +84,27 @@ function* watchProfileSaga() {
 }
 
 function* workUpdatePassword(action) {
+  const { oldPassword, newPassword } = action.payload;
+
+  const token = getUserData(true);
+
+  const payload = {
+    currPassword: oldPassword,
+    newPassword,
+  };
+
+  console.log(payload, "payload");
   try {
     yield call(
       axios.patch,
       `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/users/updatePassword`,
-      action.payload,
-      { withCredentials: true }
+      payload,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     yield put(updatePasswordSuccess());
