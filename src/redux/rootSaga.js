@@ -22,6 +22,7 @@ import watchProfileSaga, {
 import { watchSearchSaga } from "../features/search/searchSaga";
 import watchInviteMemberSaga from "../pages/teams/teamSaga";
 import { watchResetPasswordSaga } from "../features/auth/resetPassword/resetPasswordSaga";
+import { watchCreateTeamsSaga } from "../pages/profile/createTeamSaga";
 
 function* rootSaga() {
   yield all([
@@ -43,6 +44,7 @@ function* rootSaga() {
     fork(watchSearchSaga),
     fork(watchInviteMemberSaga),
     fork(watchResetPasswordSaga),
+    fork(watchCreateTeamsSaga),
   ]);
 }
 
