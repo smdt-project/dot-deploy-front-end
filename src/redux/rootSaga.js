@@ -20,7 +20,7 @@ import watchProfileSaga, {
   watchItemDeleteSaga,
 } from "../pages/profile/profileSaga";
 import { watchSearchSaga } from "../features/search/searchSaga";
-// import watchInviteMemberSaga from "../pages/teams/teamSaga";
+import watchInviteMemberSaga from "../pages/teams/teamSaga";
 import { watchResetPasswordSaga } from "../features/auth/resetPassword/resetPasswordSaga";
 
 function* rootSaga() {
@@ -41,7 +41,7 @@ function* rootSaga() {
     fork(watchPostDeleteSagas),
     fork(watchItemDeleteSaga),
     fork(watchSearchSaga),
-    // fork(watchInviteMemberSaga),
+    fork(watchInviteMemberSaga),
     fork(watchResetPasswordSaga),
   ]);
 }
