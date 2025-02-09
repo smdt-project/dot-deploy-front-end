@@ -34,10 +34,15 @@ const Publish = ({ selectAction }) => {
 
   const handleSave = () => {
     if (isUserSignedIn) {
-      const hasChanged = !isEqual(savedProject, project);
+      const hasChanged =
+        project.type === "ui"
+          ? latestCode.html.trim().length > 0 ||
+            latestCode.css.trim().length > 0 ||
+            latestCode.js.trim().length > 0
+          : latestCode.code.trim().length > 0;
       if (hasChanged) {
         selectAction();
-        dispatch(updateProjectRequest(latestCode));
+        dispatch(updateProjectRequest({ _id: project._id, code: latestCode }));
       } else {
         selectAction();
       }
