@@ -10,7 +10,6 @@ import {
 } from "./signInSlice";
 import { resetNotifier, setNotifier } from "../../../ui/notifierSlice";
 
-// Worker Saga: Handle login requests
 function* workSignInSaga(action) {
   try {
     const response = yield call(
@@ -32,7 +31,6 @@ function* workSignInSaga(action) {
   }
 }
 
-// Worker Saga: Handle forgot password requests
 function* workForgotPasswordSaga(action) {
   try {
     yield put(resetNotifier());

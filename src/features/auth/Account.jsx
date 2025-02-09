@@ -13,7 +13,8 @@ const Account = () => {
   const { pathname } = useLocation();
 
   const [isOpened, setIsOpened] = useState(false);
-  const { isUserSignedIn, user } = useSelector((state) => state.auth);
+  const { isUserSignedIn, userData } = useSelector((state) => state.auth);
+  const user = userData;
   const loginDate = user ? calcDayDifference(Date.now(), user.loginAt) : "";
 
   const handleLogOut = () => {
@@ -28,7 +29,7 @@ const Account = () => {
           className="flex items-center gap-2 sm:bg-slate-700 sm:px-2 py-1 rounded-md sm:bg-opacity-60 transition-all duration-300 hover:bg-opacity-100 cursor-pointer text-slate-300 font-semibold hover:text-slate-50"
           onClick={() => setIsOpened(true)}
         >
-          {user.avatarUrl ? (
+          {user?.avatarUrl ? (
             <img
               src={user?.avatarUrl}
               alt=""
@@ -71,7 +72,7 @@ const Account = () => {
             <div className="flex flex-col gap-3 pt-2">
               <button
                 className="flex items-center gap-2 text-sm font-semibold text-slate-300 bg-slate-700 bg-opacity-50 transition-all duration-300 hover:bg-opacity-100 hover:text-color-5 px-2 p-1 capitalize"
-                onClick={() => navigateTo(`/profile/${user?.userId}`)}
+                onClick={() => navigateTo(`/profile/${user?._id}`)}
               >
                 <div>
                   <TbUser size={18} />

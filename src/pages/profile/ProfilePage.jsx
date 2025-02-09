@@ -15,7 +15,7 @@ import UserTeams from "./UserTeams";
 
 const ProfilePage = () => {
   const { userId } = useParams();
-  const { isUserSignedIn, user } = useSelector((state) => state.auth);
+  const { isUserSignedIn, userData: user } = useSelector((state) => state.auth);
   const { currTab, userData, profileChanged } = useSelector(
     (state) => state.profile
   );
