@@ -1,45 +1,50 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { selectVersion } from "../../projectSlice";
 
 const Versions = () => {
-  const { project } = useSelector((state) => state.project);
-  const { code } = project;
-  console.log("from versions",project)
-  if (!code || code.length === 0) {
+  const { versions, selectedVersion } = useSelector((state) => state.project);
+  const dispatch = useDispatch();
+
+  const handleSelectVersion = (version) => {
+    dispatch(selectVersion(version));
+  };
+
+  const getVersionColor = (index, version) => {
+    if (selectedVersion === version.version) return "bg-green-500";
+    const colors = ["bg-blue-500"];
+    return colors[index % colors.length];
+  };
+
+  if (!versions || versions.length === 0) {
     return (
       <div className="p-4 text-slate-400 text-sm">No versions available.</div>
     );
   }
-  return (
-    <div className="p-4 text-slate-300">
-      <h2 className="text-sm uppercase text-slate-500 mb-4">Versions</h2>
-      <div className="space-y-4">
-        {code.map((version, index) => (
-          <div key={index} className="flex items-start space-x-4">
-            <div className="flex flex-col items-center">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              {index !== code.length - 1 && (
-                <div className="w-px h-8 bg-slate-500"></div>
-              )}
-            </div>
 
-            <div className="flex-1 p-3 bg-slate-700 rounded-md">
-              <div className="text-sm text-slate-400 mb-2">
-                Version {code[0].version}
-              </div>
-              <div className="text-sm text-slate-300">
-                <pre className="whitespace-pre-wrap">
-                  {JSON.stringify(
-                    {
-                      html: version.html,
-                      css: version.css,
-                      js: version.js,
-                    },
-                    null,
-                    2,
-                  )}
-                </pre>
-              </div>
-            </div>
+  return (
+    <div className="p-4 overflow-auto">
+      <h2 className="text-xs uppercase text-slate-400 font-semibold mb-4 tracking-wider">
+        Versions
+      </h2>
+      <div className="relative space-y-3">
+        {versions.map((version, index) => (
+          <div
+            key={index}
+            className={`relative flex items-center space-x-2 cursor-pointer rounded-md 
+              ${selectedVersion?.version === version.version ? "bg-slate-700 text-white" : "hover:bg-slate-800 hover:bg-opacity-50"}`}
+            onClick={() => handleSelectVersion(version)}
+          >
+            {index !== versions.length && (
+              <div className="absolute left-[0.7rem] w-px h-5 bg-slate-600 top-4"></div>
+            )}
+            <div
+              className={`w-2 h-2 rounded-full ${getVersionColor(index, version)}`}
+            ></div>
+            <span
+              className={`text-sm ${selectedVersion?.version === version.version ? "font-semibold" : "text-slate-300 ml-6"}`}
+            >
+              Version {version.version}
+            </span>
           </div>
         ))}
       </div>

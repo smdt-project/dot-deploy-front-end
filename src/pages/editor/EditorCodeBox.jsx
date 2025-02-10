@@ -105,9 +105,8 @@ const CodeBoxHeader = ({ lngName }) => {
 };
 
 const EditorCodeBox = () => {
-  const { project, currLng, latestCode } = useSelector(
-    (state) => state.project,
-  );
+  const { project, currLng, latestCode, currCode, selectedVersion } =
+    useSelector((state) => state.project);
   const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
     useSelector((state) => state.editor);
   const { autoSave, notifyInterval } = useSelector((state) => state.setting);
@@ -120,10 +119,22 @@ const EditorCodeBox = () => {
   let jsCode = "";
 
   if (!isSnippet) {
-    htmlCode = latestCode.html;
-    cssCode = latestCode.css;
-    jsCode = latestCode.js;
+    htmlCode =
+      latestCode.length === 0
+        ? project.code.find((c) => c.version === selectedVersion).html
+        : latestCode.html;
+    cssCode =
+      latestCode.length === 0
+        ? project.code.find((c) => c.version === selectedVersion).css
+        : latestCode.css;
+    jsCode =
+      latestCode.length === 0
+        ? project.code.find((c) => c.version === selectedVersion).js
+        : latestCode.js;
   }
+  const lng = currLng;
+  const code = currLng === "html" || currLng === "css" || currLng === "js" ? latestCode[currLng] : latestCode.code; 
+
 
   const selectedMode =
     lng === "react"
@@ -219,7 +230,7 @@ const EditorCodeBox = () => {
           </SplitPane>
         ) : (
           <>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
             <SplitPane
               split={splitDxr}
               sizes={sizes}
@@ -247,7 +258,7 @@ const EditorCodeBox = () => {
         >
           <SideMenu />
           <Pane minSize={"20%"}>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
             <div className="h-[95%]">
               <Editor code={code} mode={selectedMode} />
             </div>
@@ -255,7 +266,7 @@ const EditorCodeBox = () => {
         </SplitPane>
       ) : (
         <>
-          <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
+          <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
           <div className=" h-[95%]">
             <Editor code={code} mode={selectedMode} />
           </div>

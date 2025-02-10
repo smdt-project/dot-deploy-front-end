@@ -12,7 +12,7 @@ import NewsList from "./NewsList";
 
 const CommunityBody = ({ setIsDetailing }) => {
 	const { isUserSignedIn } = useSelector((state) => state.auth);
-	const { isLoading, error, latests, hasChange } = useSelector(
+	const { isLoading, error, latests = [], hasChange } = useSelector(
 		(state) => state.community
 	);
 	const isDone = !isLoading && !error;
@@ -21,7 +21,7 @@ const CommunityBody = ({ setIsDetailing }) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (latests.length === 0 || hasChange) {
+		if (latests?.length === 0 || hasChange) {
 			dispatch(getDataRequest());
 		}
 	}, [dispatch, latests, hasChange]);
