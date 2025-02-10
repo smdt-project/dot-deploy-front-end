@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { isEqual } from "lodash";
 import { useState } from "react";
 import { BiComment, BiLike, BiSolidComment, BiSolidLike } from "react-icons/bi";
@@ -12,6 +12,7 @@ import { useEditorOpen } from "../../hooks/useEditorOpen";
 import LngName from "../../ui/LngName";
 import { isCurrUserLiked } from "../../utils/validators";
 import Comment from "../community/features/comBody/Comment";
+import { fetchProjectsRequest } from "./teamsSlice";
 
 // const projects = [
 //   {
@@ -209,118 +210,20 @@ const Project = ({ project }) => {
 };
 
 function TeamProjects() {
-  const { teamData } = useSelector((state) => state.teams);
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
-  const { userId } = useParams();
+  const { id } = useParams();
 
-  // const projects = teamData?.projects;
-  const projects = [
-    {
-      _id: "1",
-      name: "Project Alpha",
-      description: "This is a project for developing an AI-powered chatbot.",
-      lngName: "python",
-      type: "project",
-      likes: [
-        { _id: "1", userId: "2" },
-        { _id: "2", userId: "3" },
-      ],
-      comments: [
-        {
-          _id: "1",
-          comment: "This project looks amazing!",
-          userId: "2",
-          userName: "John Doe",
-          userAvatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        },
-        {
-          _id: "2",
-          comment: "I want to contribute to this.",
-          userId: "3",
-          userName: "Jane Smith",
-          userAvatar: "https://randomuser.me/api/portraits/women/1.jpg",
-        },
-      ],
-    },
-    {
-      _id: "2",
-      name: "Project Beta",
-      description: "A new JavaScript library to enhance web UI components.",
-      lngName: "javascript",
-      type: "project",
-      likes: [
-        { _id: "3", userId: "1" },
-        { _id: "4", userId: "4" },
-      ],
-      comments: [
-        {
-          _id: "3",
-          comment: "Great work! Can't wait to see it finished.",
-          userId: "1",
-          userName: "Michael Feleke",
-          userAvatar: "https://randomuser.me/api/portraits/men/2.jpg",
-        },
-      ],
-    },
-    {
-      _id: "3",
-      name: "Project Gamma",
-      description: "Open-source project for creating interactive 3D models.",
-      lngName: "typescript",
-      type: "project",
-      likes: [
-        { _id: "5", userId: "1" },
-        { _id: "6", userId: "2" },
-        { _id: "7", userId: "3" },
-      ],
-      comments: [
-        {
-          _id: "4",
-          comment: "Excited for this! 3D models are the future.",
-          userId: "2",
-          userName: "John Doe",
-          userAvatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        },
-        {
-          _id: "5",
-          comment: "Would love to help with this project.",
-          userId: "3",
-          userName: "Jane Smith",
-          userAvatar: "https://randomuser.me/api/portraits/women/1.jpg",
-        },
-      ],
-    },
-    {
-      _id: "4",
-      name: "Project Delta",
-      description:
-        "A tool for monitoring and analyzing data streams in real-time.",
-      lngName: "go",
-      type: "project",
-      likes: [
-        { _id: "8", userId: "4" },
-        { _id: "9", userId: "5" },
-      ],
-      comments: [
-        {
-          _id: "6",
-          comment: "This is an important tool for data analysts.",
-          userId: "4",
-          userName: "David Lee",
-          userAvatar: "https://randomuser.me/api/portraits/men/3.jpg",
-        },
-        {
-          _id: "7",
-          comment: "I want to see more updates!",
-          userId: "5",
-          userName: "Laura Chen",
-          userAvatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        },
-      ],
-    },
-  ];
+  const dispatch = useDispatch();
 
-  const isLoggedInUser = isEqual(isUserSignedIn && user.userId, userId);
+  const projects = useSelector((state) => state.teams.projects);
+
+  console.log({ projects });
+
+  useEffect(() => {
+    dispatch(fetchProjectsRequest(id));
+  }, [dispatch]);
+
+  const isLoggedInUser = true;
 
   return projects?.length > 0 ? (
     <div className="flex flex-col justify-center sd:items-start gap-3 sd:gap-7 px-2 sd:flex-row sd:flex-wrap pb-3">
