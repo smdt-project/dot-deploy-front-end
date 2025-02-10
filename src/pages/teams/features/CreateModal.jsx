@@ -1,7 +1,10 @@
 import { MdClose } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createTeamRequest } from "../../profile/createTeamSlice";
+import {
+  createTeamRequest,
+  fetchTeamsRequest,
+} from "../../profile/createTeamSlice";
 
 const CreateModal = ({ isCreatingTeam = false, onClose }) => {
   const [name, setName] = useState("");
@@ -10,20 +13,20 @@ const CreateModal = ({ isCreatingTeam = false, onClose }) => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.teams);
 
-  const handleCreateTeam = () => {
+  const handleCreateTeam = async () => {
     if (name.trim() === "" || description.trim() === "") return;
 
-    dispatch(createTeamRequest({ name, description }));
+    await dispatch(createTeamRequest({ name, description }));
+    await dispatch(fetchTeamsRequest());
+    onClose();
   };
 
-  // Close modal when a team is successfully created
   useEffect(() => {
-    if (!loading && !error) {
+    if (!isCreatingTeam) {
       setName("");
       setDescription("");
-      //   onClose();
     }
-  }, [loading, error]);
+  }, [isCreatingTeam]);
 
   return (
     <div className="absolute left-0 top-0 z-[999] w-[100dvw] h-[99dvh] backdrop-blur-sm flex items-start justify-center py-5">
@@ -92,7 +95,10 @@ const CreateModal = ({ isCreatingTeam = false, onClose }) => {
             <div className="flex items-center justify-end gap-2 py-4">
               <button
                 className="text-slate-400 tracking-wide font-semibold py-1 px-4 rounded-md transition-all duration-300 hover:bg-opacity-100 hover:text-slate-200 capitalize"
-                onClick={onClose}
+                onClick={() => {
+                  dispatch(fetchTeamsRequest());
+                  onClose();
+                }}
                 disabled={loading}
               >
                 Cancel
