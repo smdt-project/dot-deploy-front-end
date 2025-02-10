@@ -25,7 +25,7 @@ function* workProjectUpdate(action) {
         },
       },
     );
-    yield put(updateProjectSuccess());
+    yield put(updateProjectSuccess(response.data.updatedDoc));
     yield put(setSavedProject(response.data.updatedDoc));
     yield put(setNotifier({ success: "Your change is saved successfully!" }));
   } catch (error) {

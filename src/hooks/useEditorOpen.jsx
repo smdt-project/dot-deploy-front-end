@@ -17,26 +17,25 @@ import {
   setCurrProject,
   updateSelectedLng,
 } from "../pages/editor/projectSlice";
-import { useSelector } from "react-redux";
 
 export const useEditorOpen = () => {
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
-  const { latestCode } = useSelector((state) => state.project);
 
   const openEditor = (type, lngName, project) => {
     dispatch(resetEditor());
     dispatch(resetCurrProject());
     dispatch(resetCreatingModal());
     dispatch(resetPublishingModal());
+
     if (type === "open") {
       dispatch(setCurrProject({ isNew: false, project: project }));
       if (project.type === "snippet") {
         dispatch(
           updateSelectedLng({
-            code: latestCode.code,
+            code: project.code[0].code,
             lng: project.lngName,
-          })
+          }),
         );
         if (project.lngName === "react") {
           dispatch(setOutputTerminal(true));
@@ -44,7 +43,9 @@ export const useEditorOpen = () => {
           dispatch(setOutputTerminal(false));
         }
       } else {
-        dispatch(updateSelectedLng({ code: latestCode.html, lng: "html" }));
+        dispatch(
+          updateSelectedLng({ code: project.code[0]?.html, lng: "html" }),
+        );
         dispatch(setOutputTerminal(true));
       }
     } else {
@@ -52,18 +53,22 @@ export const useEditorOpen = () => {
         setCurrProject({
           isNew: true,
           project: project,
-        })
+        }),
       );
       if (type === "ui") {
         dispatch(setOutputTerminal(true));
-        dispatch(updateSelectedLng({ code: latestCode.html, lng: "html" }));
+        dispatch(
+          updateSelectedLng({ code: project.code[0]?.html, lng: "html" }),
+        );
       } else {
         if (lngName === "react") {
           dispatch(setOutputTerminal(true));
         } else {
           dispatch(setOutputTerminal(false));
         }
-        dispatch(updateSelectedLng({ code: latestCode.code, lng: lngName }));
+        dispatch(
+          updateSelectedLng({ code: project.code[0]?.code, lng: lngName }),
+        );
       }
     }
 
@@ -74,8 +79,8 @@ export const useEditorOpen = () => {
         JSON.stringify({
           type: "info",
           info: JSON.stringify(project, null, 2),
-        })
-      )
+        }),
+      ),
     );
 
     dispatch(handleTerminal(true));

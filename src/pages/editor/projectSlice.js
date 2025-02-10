@@ -14,9 +14,10 @@ const initialState = {
     type: "ui",
     lngName: "html",
   },
-  versions: [],
   currLng: "html",
+  versions: [],
   latestCode: {},
+  selectedVersion: 1,
   currCode: "",
   isLoading: false,
   error: false,
@@ -33,6 +34,16 @@ const projectSlice = createSlice({
         ...action.payload.project,
         code: action.payload.project.code || initialState.project.code,
       };
+      state.latestCode =
+        action.payload.project.code[0] || initialState.project.code[0];
+      state.selectedVersion = state.project.code[0].version;
+      state.versions = action.payload.project.code;
+    },
+    selectVersion: (state, action) => {
+      const selectedVersion = action.payload;
+      state.selectedVersion = selectedVersion.version;
+      state.project.code = [selectedVersion];
+      state.latestCode = selectedVersion;
     },
     updateSnippetCode: (state, action) => {
       state.project = {
@@ -78,9 +89,12 @@ const projectSlice = createSlice({
       state.error = "";
       state.isLoading = true;
     },
-    updateProjectSuccess: (state) => {
+    updateProjectSuccess: (state, action) => {
       state.isLoading = false;
       state.isDone = true;
+      state.project = action.payload;
+      state.latestCode = action.payload.code[0];
+      state.versions = action.payload.code;
     },
     updateProjectFailure: (state, action) => {
       state.error = action.payload;
@@ -95,6 +109,7 @@ export const {
   updateCSS,
   updateHTML,
   updateJS,
+  selectVersion,
   updateSelectedLng,
   setLatestCode,
   resetCurrProject,
