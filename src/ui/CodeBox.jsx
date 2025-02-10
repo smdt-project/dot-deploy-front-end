@@ -109,8 +109,9 @@ const CodeHeader = ({ project, code, setCode }) => {
 const CodeBox = ({ project, style, height, width }) => {
 	const isSnippet = project.type === "snippet";
 
+	// TODO:
 	const [code, setCode] = useState(
-		isSnippet ? project.code.code : project.code.html
+		isSnippet ? project.code[0]?.code : project.code[0]?.html
 	);
 
 	return (
