@@ -22,7 +22,7 @@ const Versions = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 overflow-auto">
       <h2 className="text-xs uppercase text-slate-400 font-semibold mb-4 tracking-wider">
         Versions
       </h2>
