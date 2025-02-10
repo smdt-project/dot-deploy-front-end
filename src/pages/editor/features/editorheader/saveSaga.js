@@ -8,7 +8,6 @@ import { saveFailure, saveRequest, saveSuccess } from "./saveSlice";
 
 function* workSaveSaga(action) {
   const token = getUserData(true);
-  console.log(action.payload);
   try {
     const response = yield call(
       axios.post,
