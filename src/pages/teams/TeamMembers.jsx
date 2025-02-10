@@ -1,22 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoPeopleSharp } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { inviteMemberRequest } from "./teamsSlice";
+import InviteMemberModal from "./features/InviteMemberModal";
 
 function TeamMembers() {
   const { id } = useParams();
+  const dispatch = useDispatch();
+
+  const [openInvitationModal, setOpenInvitationModal] = useState(false);
 
   const { teams } = useSelector((state) => state.createTeam);
 
   const team = teams.find((team) => team._id === id);
   const members = team.members;
 
+  const handleInviteMember = (email) => {
+    if (id) {
+      dispatch(inviteMemberRequest({ email, teamId: id }));
+    }
+  };
+
   return (
     <div className="flex flex-col text-white p-6 rounded-lg shadow-lg ">
       <div className="flex items-center justify-end  pb-4 mb-4">
-        <button className="mt-4 p-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">
+        <button
+          onClick={() => setOpenInvitationModal(true)}
+          className="mt-4 p-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700"
+        >
           <div className="flex items-center gap-1">
             <IoPeopleSharp className="mr-2 text-lg drop-shadow-sm" />
             <span>Invite Members</span>
@@ -70,6 +84,13 @@ function TeamMembers() {
           ))}
         </tbody>
       </table>
+
+      {openInvitationModal && (
+        <InviteMemberModal
+          onClose={() => setOpenInvitationModal(false)}
+          onInvite={handleInviteMember}
+        />
+      )}
     </div>
   );
 }
