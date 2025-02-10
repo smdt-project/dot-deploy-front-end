@@ -50,7 +50,7 @@ function* workProjectUpdate(action) {
         : error.message
       : error.message;
     yield put(updateProjectFailure(message));
-    yield put(setNotifier({ error: error }));
+    yield put(setNotifier({ error: error.message }));
   }
 }
 

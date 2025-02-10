@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectVersion } from "../../projectSlice";
 
 const Versions = () => {
-  const { versions, selectedVersion } = useSelector((state) => state.project);
+  const { versions = [], selectedVersion } = useSelector((state) => state.project);
   const dispatch = useDispatch();
 
   const handleSelectVersion = (version) => {
@@ -14,13 +14,9 @@ const Versions = () => {
     const colors = ["bg-blue-500"];
     return colors[index % colors.length];
   };
-
-  if (!versions || versions.length === 0) {
-    return (
-      <div className="p-4 text-slate-400 text-sm">No versions available.</div>
-    );
-  }
-
+if (!Array.isArray(versions) || versions.length === 0) {
+  return <div className="p-4 text-slate-400 text-sm">No versions available.</div>;
+}
   return (
     <div className="p-4 overflow-auto">
       <h2 className="text-xs uppercase text-slate-400 font-semibold mb-4 tracking-wider">
