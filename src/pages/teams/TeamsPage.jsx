@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../features/header/Header";
 import TeamsTabs from "./TeamsTabs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import TeamOverview from "./TeamOverview";
 import TeamProjects from "./TeamProjects";
 import TeamMembers from "./TeamMembers";
 import { MdArrowBack } from "react-icons/md";
+import { fetchTeamsRequest } from "../profile/createTeamSlice";
+import { fetchProjectsRequest } from "./teamsSlice";
 
 function TeamsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { teams } = useSelector((state) => state.createTeam);
+  const projects = useSelector((state) => state.teams.projects);
+  const dispatch = useDispatch();
 
   const team = teams.find((team) => team._id === id);
 
@@ -22,8 +26,16 @@ function TeamsPage() {
 
   const isLoggedInUser = isUserSignedIn && userId === user.userId;
 
+  useEffect(() => {
+    dispatch(fetchTeamsRequest());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchProjectsRequest(id));
+  }, [dispatch]);
+
   const teamData = {
-    projects: [],
+    projects,
     members: team?.members,
   };
 
