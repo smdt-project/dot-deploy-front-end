@@ -31,6 +31,9 @@ function* workProjectUpdate(action) {
         },
       },
     );
+    yield put(updateProjectSuccess(response.data.updatedDoc));
+    yield put(setSavedProject(response.data.updatedDoc));
+
     const updatedProject = response.data.updatedDoc;
     const updatedProjects = userData.projects.map((project) =>
       project._id === updatedProject._id ? updatedProject : project
@@ -40,9 +43,7 @@ function* workProjectUpdate(action) {
 
     yield put(getDataSuccess({notifications, latest: updatedLatests, topProjects: updatedTopProjects}));
     yield put(userDataSuccess({ ...userData, projects: updatedProjects }));
-    yield put(updateProjectSuccess(response.data.updatedDoc));
-    yield put(setSavedProject(response.data.updatedDoc));
-    yield put(setNotifier({ success: "Your change is saved successfully!" }));
+        yield put(setNotifier({ success: "Your change is saved successfully!" }));
   } catch (error) {
     const message = error.response
       ? error.response.data
