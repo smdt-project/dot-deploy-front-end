@@ -5,8 +5,8 @@ import PostNewsTab from "./PostNewsTab";
 import ProjectNewsTab from "./ProjectNewsTab";
 
 const NewsList = () => {
-	const { latests } = useSelector((state) => state.community);
-	const hasNews = latests.length > 0;
+	const { latests = [] } = useSelector((state) => state.community);
+	const hasNews = latests?.length > 0;
 
 	return (
 		<div className="h-full flex flex-col justify-between mt-3 pr-3 overflow-x-hidden overflow-y-scroll small-scroll">
