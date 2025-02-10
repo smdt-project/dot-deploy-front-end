@@ -47,7 +47,6 @@ const Editor = ({ code }) => {
   }, [searchPanel, editorView]);
 
   const handleChange = (value) => updateCode(value, currLng);
-
   return (
     <CodeMirror
       ref={editorRef}

@@ -178,7 +178,7 @@ const InfoLog = ({ logs }) => {
 const Terminal = ({ srcDoc, isOutput }) => {
 	srcDoc = srcDoc.replace("/override/", overridingScript);
 	const { logs } = useSelector((state) => state.editor);
-	const { project, currLng, currCode } = useSelector((state) => state.project);
+	const { project, currLng, currCode, latestCode } = useSelector((state) => state.project);
 	const [sizes, setSizes] = useState([30, 70]);
 
 	const allLogs = logs.map((log) => JSON.parse(log));
@@ -236,7 +236,7 @@ const Terminal = ({ srcDoc, isOutput }) => {
 		<div className="h-[90%] border-l-[1px] border-r-[1px] border-[#353a47] flex flex-grow ">
 			{currLng === "react" ? (
 				<div className={`${isOutput ? "flex" : "hidden"} relative p-5`}>
-					<UserReactComponent userJsx={currCode} />
+					<UserReactComponent userJsx={latestCode.code} />
 				</div>
 			) : (
 				<iframe
