@@ -133,7 +133,7 @@ const EditorCodeBox = () => {
         : latestCode.js;
   }
   const lng = currLng;
-  const code = latestCode[currLng];
+  const code = currLng === "html" || currLng === "css" || currLng === "js" ? latestCode[currLng] : latestCode.code; 
 
 
   const selectedMode =
