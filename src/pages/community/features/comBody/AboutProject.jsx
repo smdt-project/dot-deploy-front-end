@@ -32,10 +32,11 @@ const AboutProject = ({ project, goToOwner }) => {
 	let jsCode = "";
 
 	if (!isSnippet) {
-		htmlCode = project.code.html;
-		cssCode = project.code.css;
-		jsCode = project.code.js;
+		htmlCode = project.code[0]?.html;
+		cssCode = project.code[0]?.css;
+		jsCode = project.code[0]?.js;
 	}
+	console.log(htmlCode, cssCode, jsCode);
 
 	const srcDoc = `
 		<html>
@@ -161,7 +162,7 @@ const AboutProject = ({ project, goToOwner }) => {
 					<div className="flex items-center justify-center flex-grow h-44 bg-n-14 border-[1px] border-[#555] ">
 						{project.lngName === "react" ? (
 							<div className="w-full h-full overflow-scroll relative p-5 code-area">
-								<UserReactComponent userJsx={project.code.code} />
+								<UserReactComponent userJsx={project.code[0]?.code} />
 							</div>
 						) : (
 							<ResultFrame srcDoc={srcDoc} />
