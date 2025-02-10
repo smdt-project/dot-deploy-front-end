@@ -38,9 +38,14 @@ export function* watchUpdateProfile() {
 function* workItemDeleteSaga(action) {
   const token = getUserData(true);
   const { itemName, id } = action.payload;
-  let url = `${
-    import.meta.env.VITE_REACT_APP_API_URL
-  }/api/v1/${itemName}s/${id}`;
+  // const filteredPayload = { itemName, id };
+  const { teamId } = action.payload;
+
+  const url = teamId
+    ? `${
+        import.meta.env.VITE_REACT_APP_API_URL
+      }/api/v1/organization/project/${teamId}/${id}`
+    : `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/${itemName}s/${id}`;
 
   try {
     yield put(resetNotifier());
@@ -52,10 +57,10 @@ function* workItemDeleteSaga(action) {
 
     yield put(deleteItemSuccess());
     yield put(resetNotifier());
-    yield put(setNotifier({ success: response.data.message }));
+    yield put(setNotifier({ success: "Successfully deleted" }));
   } catch (error) {
     const message = error.response?.data?.message || error.message;
-    yield put(setNotifier({ error: message }));
+    yield put(setNotifier({ error: "Failed to delete" }));
   }
 }
 
