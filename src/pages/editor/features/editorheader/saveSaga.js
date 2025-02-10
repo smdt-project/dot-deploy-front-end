@@ -9,18 +9,19 @@ import { saveFailure, saveRequest, saveSuccess } from "./saveSlice";
 function* workSaveSaga(action) {
   const token = getUserData(true);
   console.log(action.payload);
+  const { teamId, ...filteredPayload } = action.payload;
+  const url = teamId
+    ? `${
+        import.meta.env.VITE_REACT_APP_API_URL
+      }/api/v1/organization/project/${teamId}`
+    : `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/projects`;
   try {
-    const response = yield call(
-      axios.post,
-      `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/projects`,
-      action.payload,
-      {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const response = yield call(axios.post, url, filteredPayload, {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
     yield put(changeMade());
     yield put(setCurrProject({ isNew: false, project: response.data.doc }));
     yield put(saveSuccess(response.data.doc));
