@@ -95,6 +95,7 @@ const projectSlice = createSlice({
       state.project = action.payload;
       state.latestCode = action.payload.code[0];
       state.versions = action.payload.code;
+      state.selectedVersion = action.payload.code[0].version;
     },
     updateProjectFailure: (state, action) => {
       state.error = action.payload;
