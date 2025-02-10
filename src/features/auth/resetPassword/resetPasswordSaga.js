@@ -1,16 +1,17 @@
-import { takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 import {
   resetPasswordFailure,
   resetPasswordRequest,
   resetPasswordSuccess,
 } from "./resetPasswordSlice";
+import axios from "axios";
 
 // Saga worker function
 function* workResetPasswordSaga(action) {
   try {
     const { token, password, confirmPassword } = action.payload;
     yield call(
-      axios.post,
+      axios.patch,
       `${
         import.meta.env.VITE_REACT_APP_API_URL
       }/api/v1/users/resetpassword/${token}`,
