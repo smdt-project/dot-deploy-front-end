@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { IoPeopleSharp } from "react-icons/io5";
 import { FaCode } from "react-icons/fa6";
@@ -8,13 +9,17 @@ import InviteMemberModal from "./features/InviteMemberModal";
 import { inviteMemberRequest } from "./teamsSlice";
 
 const TeamOverview = () => {
+  const { id } = useParams();
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const dispatch = useDispatch();
-  const members = useSelector((state) => state.teams.members);
+  const { teams } = useSelector((state) => state.createTeam);
+
+  const team = teams.find((team) => team._id === id);
 
   const handleInviteMember = (email) => {
-    const teamId = "67a13012f73fe83f920344b5";
-    dispatch(inviteMemberRequest({ email, teamId }));
+    if (id) {
+      dispatch(inviteMemberRequest({ email, teamId: id }));
+    }
   };
 
   return (
@@ -26,7 +31,7 @@ const TeamOverview = () => {
             <GiTeamIdea />
           </div>
           <span className="text-xl sm:text-2xl font-semibold capitalize">
-            Awesome Devs
+            {team?.name}
           </span>
         </div>
 
@@ -38,7 +43,7 @@ const TeamOverview = () => {
 
           <div className="flex items-center bg-gradient-to-r from-green-500 to-emerald-400 text-white py-1.5 px-4 rounded-full text-sm shadow-lg border border-green-300/30 backdrop-blur-md">
             <IoPeopleSharp className="mr-2 text-lg drop-shadow-sm" />
-            <span className="font-medium">{members.length} Members</span>
+            <span className="font-medium">{team.members.length} Members</span>
           </div>
         </div>
       </div>
