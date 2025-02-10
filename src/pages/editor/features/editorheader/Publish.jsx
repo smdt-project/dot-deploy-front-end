@@ -15,7 +15,7 @@ import { setAutoSave } from "../sidebar/settingSlice";
 
 const Publish = ({ selectAction }) => {
   const { isUserSignedIn } = useSelector((state) => state.auth);
-  const { isNew, project, latestCode } = useSelector((state) => state.project);
+  const { isNew, project, latestCode, currCode } = useSelector((state) => state.project);
   const { autoSave, notifyInterval } = useSelector((state) => state.setting);
   const { savedProject } = useSelector((state) => state.save);
   const { user } = useSelector((state) => state.auth);
@@ -34,15 +34,16 @@ const Publish = ({ selectAction }) => {
 
   const handleSave = () => {
     if (isUserSignedIn) {
+      console.log("from save", latestCode, currCode)
       const hasChanged =
         project.type === "ui"
           ? latestCode.html.trim().length > 0 ||
             latestCode.css.trim().length > 0 ||
             latestCode.js.trim().length > 0
-          : latestCode.code.trim().length > 0;
+          : currCode.trim().length > 0;
       if (hasChanged) {
         selectAction();
-        dispatch(updateProjectRequest({ _id: project._id, code: latestCode }));
+        dispatch(updateProjectRequest({ _id: project._id, code: project.type === "snippet" ? {...latestCode, code: currCode} : latestCode }));
       } else {
         selectAction();
       }
