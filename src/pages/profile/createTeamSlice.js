@@ -27,7 +27,6 @@ const teamsSlice = createSlice({
       state.error = null;
     },
     createTeamSuccess: (state, action) => {
-      state.teams.push(action.payload);
       state.loading = false;
     },
     createTeamFailure: (state, action) => {
