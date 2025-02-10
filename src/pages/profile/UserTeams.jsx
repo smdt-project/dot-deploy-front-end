@@ -21,7 +21,7 @@ const Team = ({ team }) => {
       <div className="flex justify-between bg-slate-800 bg-opacity-60 px-4 py-3 rounded-md">
         <div className="flex flex-col">
           <NavLink
-            to={`/teams`}
+            to={`/teams/${team.id}`}
             className="text-slate-200 font-semibold hover:text-slate-400"
           >
             {team.name}
@@ -30,7 +30,7 @@ const Team = ({ team }) => {
             {team.description}
           </span>
           <span className="text-slate-600 text-sm mt-1">
-            {team.members} Member(s)
+            {Array.isArray(team.members) ? team.members.length : team.members}{" "}
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -79,7 +79,7 @@ const UserTeams = () => {
   const dispatch = useDispatch();
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
   const { userId } = useParams();
-  const { teams, loading, error } = useSelector((state) => state.teams);
+  const { teams, loading, error } = useSelector((state) => state.createTeam);
   const [isCreating, setIsCreating] = useState(false);
   const isLoggedInUser = isEqual(isUserSignedIn && user.userId, userId);
 
