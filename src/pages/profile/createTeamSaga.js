@@ -22,7 +22,8 @@ function* fetchTeamsSaga() {
       withCredentials: true,
       headers: { Authorization: `Bearer ${token}` },
     });
-    yield put(fetchTeamsSuccess(response.data));
+
+    yield put(fetchTeamsSuccess(response.data.data.organizations));
   } catch (error) {
     const message = error.response?.data?.message || error.message;
     yield put(fetchTeamsFailure(message));
