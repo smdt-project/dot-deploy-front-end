@@ -13,28 +13,32 @@ import sidebarReducer from "../pages/editor/features/sidebar/sidebarSlice";
 import projectReducer from "../pages/editor/projectSlice";
 import profileReducer from "../pages/profile/profileSlice";
 import notifierReducer from "../ui/notifierSlice";
-import teamsReducer from '../pages/teams/teamsSlice'
+import teamsReducer from "../pages/teams/teamsSlice";
+import resetPasswordReducer from "../features/auth/resetPassword/resetPasswordSlice";
+import createTeamReducer from "../pages/profile/createTeamSlice";
 export const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
-	reducer: {
-		auth: authReducer,
-		community: communityReducer,
-		editor: editorReducer,
-		notifier: notifierReducer,
-		post: postReducer,
-		profile: profileReducer,
-		teams:teamsReducer,
-		project: projectReducer,
-		setting: settingReducer,
-		sidebar: sidebarReducer,
-		signUp: signUpReducer,
-		signIn: signInReducer,
-		save: saveReducer,
-		search: searchReducer,
-	},
-	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat(sagaMiddleware),
+  reducer: {
+    auth: authReducer,
+    community: communityReducer,
+    editor: editorReducer,
+    notifier: notifierReducer,
+    post: postReducer,
+    profile: profileReducer,
+    teams: teamsReducer,
+    project: projectReducer,
+    setting: settingReducer,
+    sidebar: sidebarReducer,
+    signUp: signUpReducer,
+    signIn: signInReducer,
+    save: saveReducer,
+    search: searchReducer,
+    resetPassword: resetPasswordReducer,
+    createTeam: createTeamReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(sagaMiddleware),
 });
 
 export default store;

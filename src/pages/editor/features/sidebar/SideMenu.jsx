@@ -20,7 +20,7 @@ const SideMenu = () => {
       ) : currTab === "setting" ? (
         <Settings />
       ) : (
-        currTab === "versions" && <Versions />
+        currTab === "version" && <Versions />
       )}
     </div>
   );

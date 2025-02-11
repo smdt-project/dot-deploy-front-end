@@ -105,9 +105,8 @@ const CodeBoxHeader = ({ lngName }) => {
 };
 
 const EditorCodeBox = () => {
-  const { project, currLng, currCode, selectedVersion } = useSelector(
-    (state) => state.project,
-  );
+  const { project, currLng, latestCode, currCode, selectedVersion } =
+    useSelector((state) => state.project);
   const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
     useSelector((state) => state.editor);
   const { autoSave, notifyInterval } = useSelector((state) => state.setting);
@@ -119,22 +118,32 @@ const EditorCodeBox = () => {
   let cssCode = "";
   let jsCode = "";
 
-  if (!isSnippet && project.code && project.code[selectedVersion]) {
-    htmlCode = project.code[selectedVersion].html || "";
-    cssCode = project.code[selectedVersion].css || "";
-    jsCode = project.code[selectedVersion].js || "";
+  if (!isSnippet) {
+    htmlCode =
+      latestCode.length === 0
+        ? project.code.find((c) => c.version === selectedVersion).html
+        : latestCode.html;
+    cssCode =
+      latestCode.length === 0
+        ? project.code.find((c) => c.version === selectedVersion).css
+        : latestCode.css;
+    jsCode =
+      latestCode.length === 0
+        ? project.code.find((c) => c.version === selectedVersion).js
+        : latestCode.js;
   }
   const lng = currLng;
-  const code = currCode;
+  const code =
+    project.type === "snippet" ? latestCode.code : latestCode[currLng];
 
   const selectedMode =
     lng === "react"
       ? javascript({ jsx: true })
       : lng === "html"
-        ? html()
-        : lng === "css"
-          ? css()
-          : javascript();
+      ? html()
+      : lng === "css"
+      ? css()
+      : javascript();
 
   const [sizes, setSizes] = useState(showTerminal ? [70, 30] : [100, 0]);
   const [horizSizes, setHorizSizes] = useState([15, 85]);
@@ -165,8 +174,8 @@ const EditorCodeBox = () => {
               JSON.stringify({
                 type: "info",
                 info: `Changes are auto saved - ${date.toISOString()}`,
-              }),
-            ),
+              })
+            )
           );
         }
       }
@@ -221,7 +230,7 @@ const EditorCodeBox = () => {
           </SplitPane>
         ) : (
           <>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
             <SplitPane
               split={splitDxr}
               sizes={sizes}
@@ -249,7 +258,7 @@ const EditorCodeBox = () => {
         >
           <SideMenu />
           <Pane minSize={"20%"}>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
             <div className="h-[95%]">
               <Editor code={code} mode={selectedMode} />
             </div>
@@ -257,7 +266,7 @@ const EditorCodeBox = () => {
         </SplitPane>
       ) : (
         <>
-          <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
+          <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
           <div className=" h-[95%]">
             <Editor code={code} mode={selectedMode} />
           </div>

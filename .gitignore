@@ -1,4 +1,32 @@
+# Node.js dependencies
 node_modules/
-.git
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Build files
+dist/
+build/
+
+# Environment variables
 .env
+
+# IDE files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Coverage directory used by testing tools
+coverage/
+
+# Temporary files
+tmp/
+temp/
 
