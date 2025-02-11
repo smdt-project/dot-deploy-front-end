@@ -18,7 +18,7 @@ import {
   updateSelectedLng,
 } from "../pages/editor/projectSlice";
 
-export const useEditorOpen = () => {
+export const useEditorOpen = (teamId) => {
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
 
@@ -35,7 +35,7 @@ export const useEditorOpen = () => {
           updateSelectedLng({
             code: project.code[0].code,
             lng: project.lngName,
-          }),
+          })
         );
         if (project.lngName === "react") {
           dispatch(setOutputTerminal(true));
@@ -44,7 +44,7 @@ export const useEditorOpen = () => {
         }
       } else {
         dispatch(
-          updateSelectedLng({ code: project.code[0]?.html, lng: "html" }),
+          updateSelectedLng({ code: project.code[0]?.html, lng: "html" })
         );
         dispatch(setOutputTerminal(true));
       }
@@ -53,12 +53,12 @@ export const useEditorOpen = () => {
         setCurrProject({
           isNew: true,
           project: project,
-        }),
+        })
       );
       if (type === "ui") {
         dispatch(setOutputTerminal(true));
         dispatch(
-          updateSelectedLng({ code: project.code[0]?.html, lng: "html" }),
+          updateSelectedLng({ code: project.code[0]?.html, lng: "html" })
         );
       } else {
         if (lngName === "react") {
@@ -67,7 +67,7 @@ export const useEditorOpen = () => {
           dispatch(setOutputTerminal(false));
         }
         dispatch(
-          updateSelectedLng({ code: project.code[0]?.code, lng: lngName }),
+          updateSelectedLng({ code: project.code[0]?.code, lng: lngName })
         );
       }
     }
@@ -79,13 +79,17 @@ export const useEditorOpen = () => {
         JSON.stringify({
           type: "info",
           info: JSON.stringify(project, null, 2),
-        }),
-      ),
+        })
+      )
     );
 
     dispatch(handleTerminal(true));
     dispatch(selectMenu({ name: "explore", title: "Explore" }));
-    navigateTo("/editor/code");
+    if (teamId) {
+      navigateTo(`/editor/code?teamId=${teamId}`);
+    } else {
+      navigateTo("/editor/code");
+    }
     dispatch(setLastSave({ at: Date.now(), project }));
   };
 

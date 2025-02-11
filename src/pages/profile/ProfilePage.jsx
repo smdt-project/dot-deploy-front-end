@@ -12,10 +12,12 @@ import UserPosts from "./UserPosts";
 import UserProfileSidebar from "./UserProfileSidebar";
 import UserProjects from "./UserProjects";
 import UserTeams from "./UserTeams";
+import { fetchTeamsRequest } from "./createTeamSlice";
 
 const ProfilePage = () => {
   const { userId } = useParams();
   const { isUserSignedIn, user } = useSelector((state) => state.auth);
+  const { teams } = useSelector((state) => state.createTeam);
   const { currTab, userData, profileChanged } = useSelector(
     (state) => state.profile
   );
@@ -31,6 +33,7 @@ const ProfilePage = () => {
     if (profileChanged) {
       dispatch(userProfileRequest(userId));
     }
+    dispatch(fetchTeamsRequest());
   }, [profileChanged, dispatch, userId]);
 
   return (
@@ -50,7 +53,7 @@ const ProfilePage = () => {
                 userData.projects.length,
                 userData.posts.length,
                 userData.comments.length,
-                3,
+                teams?.length,
               ]}
             />
             <div className="w-full overflow-x-hidden overflow-y-scroll h-[58.5dvh] sm:h-[98dvh] small-scroll mt-3 sd:mt-7 mb-1">

@@ -19,7 +19,7 @@ import {
   TbTerminal,
 } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { useCode } from "../../../../hooks/useCode";
 import LngTab from "../../../../ui/LngTab";
 import {
@@ -173,15 +173,18 @@ const MenuTabContent = ({ tabName, selectAction }) => {
   const { isCreating, newProLngName, newProType, isCreatingModalMinimized } =
     useSelector((state) => state.editor);
   const { project, currCode, currLng, isNew } = useSelector(
-    (state) => state.project,
+    (state) => state.project
   );
   const [isHovered, setIsHovered] = useState(false);
   const [isAboutHovered, setIsAboutHovered] = useState(false);
 
+  const [searchParams] = useSearchParams();
+  const teamId = searchParams.get("teamId");
+
   const currProjectName = project.name;
   const isSnippet = project.type === "snippet";
-  
-	const navigateTo = useNavigate();
+
+  const navigateTo = useNavigate();
   const updateCode = useCode();
   const dispatch = useDispatch();
 
@@ -190,7 +193,11 @@ const MenuTabContent = ({ tabName, selectAction }) => {
     dispatch(setNewProject({ type, lngName }));
     dispatch(handleCreatingModal(true));
     selectAction();
-    navigateTo("/editor/code");
+    if (teamId) {
+      navigateTo(`/editor/code?teamId=${teamId}`);
+    } else {
+      navigateTo("/editor/code");
+    }
   };
 
   const expandCreatingModal = () => {
@@ -207,7 +214,7 @@ const MenuTabContent = ({ tabName, selectAction }) => {
       exportCodeAsFile(
         [info.fileName],
         [info.title],
-        [project.code[selectedVersion].code],
+        [project.code[selectedVersion].code]
       );
     } else {
       exportCodeAsFile(
@@ -217,7 +224,7 @@ const MenuTabContent = ({ tabName, selectAction }) => {
           project.code[selectedVersion].html,
           project.code[selectedVersion].css,
           project.code[selectedVersion].js,
-        ],
+        ]
       );
     }
   };
@@ -611,7 +618,7 @@ const EditorMenu = ({ show, setShow }) => {
   const onSettingClick = () => {
     dispatch(handleSideMenu(true));
     dispatch(
-      selectMenu({ name: "setting", title: "Settings & Customizations" }),
+      selectMenu({ name: "setting", title: "Settings & Customizations" })
     );
     selectAction();
   };

@@ -1,26 +1,42 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../features/header/Header";
 import TeamsTabs from "./TeamsTabs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import TeamOverview from "./TeamOverview";
 import TeamProjects from "./TeamProjects";
 import TeamMembers from "./TeamMembers";
 import { MdArrowBack } from "react-icons/md";
+import { fetchTeamsRequest } from "../profile/createTeamSlice";
+import { fetchProjectsRequest } from "./teamsSlice";
 
 function TeamsPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { teams } = useSelector((state) => state.createTeam);
+  const projects = useSelector((state) => state.teams.projects);
+  const dispatch = useDispatch();
+
+  const team = teams.find((team) => team._id === id);
+
   const { userId } = useParams();
   const { isUserSignedIn, user } = useSelector((state) => state.auth);
   const { currTab } = useSelector((state) => state.teams);
 
   const isLoggedInUser = isUserSignedIn && userId === user.userId;
 
+  useEffect(() => {
+    dispatch(fetchTeamsRequest());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchProjectsRequest(id));
+  }, [dispatch]);
+
   const teamData = {
-    projects: [],
-    members: [],
+    projects,
+    members: team?.members,
   };
 
   return (
@@ -36,7 +52,7 @@ function TeamsPage() {
         <TeamsTabs
           classes="hidden flex justify-center sm:flex items-center gap-2 p-2 rounded-lg bg-slate-900 bg-opacity-70 border-2 border-slate-800"
           isLoggedInUser={isLoggedInUser}
-          tabData={[teamData.projects.length, teamData.members.length]}
+          tabData={[teamData?.projects?.length, teamData?.members?.length]}
         />
         <div className="overflow-x-hidden min-w-[60vw] h-[58.5dvh] sm:h-[98dvh] small-scroll mt-3 sd:mt-7 mb-1">
           {currTab === "overview" && <TeamOverview />}
@@ -49,4 +65,3 @@ function TeamsPage() {
 }
 
 export default TeamsPage;
-
