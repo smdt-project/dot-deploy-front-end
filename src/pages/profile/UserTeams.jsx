@@ -90,7 +90,7 @@ const UserTeams = () => {
   return (
     <div className="flex flex-col justify-center sd:items-start gap-3 px-2 sd:flex-row sd:flex-wrap pb-3 w-full">
       {isLoggedInUser && (
-        <div className="w-full flex justify-center sd:justify-start">
+        <div className="w-full flex justify-center">
           <button
             className="text-slate-300 bg-slate-700 px-4 py-2 rounded-full hover:text-slate-50"
             onClick={() => setIsCreating(true)}

@@ -53,11 +53,11 @@ const CodeHeader = ({ project, code, setCode }) => {
   const handleSelection = (lng) => {
     setLngName(lng);
     if (lng === "html") {
-      setCode(project.code.html);
+      setCode(project.code[0]?.html);
     } else if (lng === "css") {
-      setCode(project.code.css);
+      setCode(project.code[0]?.css);
     } else {
-      setCode(project.code.js);
+      setCode(project.code[0]?.js);
     }
   };
 

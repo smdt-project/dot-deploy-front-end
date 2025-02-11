@@ -19,7 +19,7 @@ const SnippetLngTab = ({ lngName }) => {
 		>
 			<div>{selectedTab.icon}</div>
 			<span className="text-slate-400">
-				{selectedTab.title}.{selectedTab.extension}
+				{selectedTab.title}.{selectedTab?.extension}
 			</span>
 		</button>
 	);
