@@ -1,5 +1,3 @@
-import Loading from "../../ui/Loading";
-import Error from "../../ui/Error";
 import { useState } from "react";
 
 import { useGSAP } from "@gsap/react";
@@ -9,7 +7,11 @@ import { BiRefresh } from "react-icons/bi";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../features/auth/authData";
-import { setLatestCode, toggleCommitting, updateProjectRequest } from "./projectSlice";
+import {
+  setLatestCode,
+  toggleCommitting,
+  updateProjectRequest
+} from "./projectSlice";
 import { CgClose } from "react-icons/cg";
 
 const Generating = () => {
@@ -27,20 +29,22 @@ const Generating = () => {
   return (
     <div className="flex items-center text-color-5 pb-1">
       <div className="loadingDot">
-        <GoDot size={22} />
+        <GoDot size={15} />
       </div>
       <div className="loadingDot">
-        <GoDot size={22} />
+        <GoDot size={15} />
       </div>
       <div className="loadingDot">
-        <GoDot size={22} />
+        <GoDot size={15} />
       </div>
     </div>
   );
 };
 
 const CommitBox = () => {
-  const { project, latestCode, currCode } = useSelector((state) => state.project);
+  const { project, latestCode, currCode } = useSelector(
+    (state) => state.project
+  );
 
   const [commit, setCommit] = useState("");
   const [emptyErr, setEmptyErr] = useState("");
@@ -59,17 +63,19 @@ const CommitBox = () => {
         })
       );
       dispatch(toggleCommitting(false));
+
+      const committedCode = { ...latestCode, commitMsg: commit };
       dispatch(
         updateProjectRequest({
           _id: project._id,
           code:
             project.type === "snippet"
-              ? { ...latestCode, code: currCode }
-              : latestCode,
+              ? { ...committedCode, code: currCode }
+              : committedCode
         })
       );
     } else {
-      setEmptyErr("Commit Message Cannot be empity!");
+      setEmptyErr("Commit Message Can't be empity!");
     }
   };
 
@@ -79,11 +85,11 @@ const CommitBox = () => {
       setIsGenerating(true);
       setError("");
 
-      const response = await axios.patch(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/projects/${
+      const response = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/projects/suggest/${
           project.id
         }`,
-        latestCode,
+        { code: latestCode },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,11 +98,8 @@ const CommitBox = () => {
         }
       );
 
-      const data = response.data;
-      console.log(latestCode);
-      console.log(response);
+      setCommit(response.data.data);
     } catch (error) {
-      console.log(error);
       setError("Unable to generate commit message");
     } finally {
       setIsGenerating(false);
@@ -109,14 +112,14 @@ const CommitBox = () => {
   };
 
   const cancelCommiting = () => {
-    dispatch(toggleCommitting(false))
+    dispatch(toggleCommitting(false));
   };
 
   return (
     <div className="absolute left-1/2 -translate-x-1/2 top-10 z-[100] flex flex-col gap-2 w-[35rem] p-3  m-5 rounded-lg border-[1px] border-slate-700 overflow-hidden shadow-lg bg-n-14 shadow-n-13">
       <div className="flex items-center gap-3 flex-grow">
         <div className="flex items-center justify-between flex-grow">
-          <span className="text-color-5">Commiting </span>
+          <span className="text-color-5">Add Commit Message </span>
           <button
             className="text-n-2 text-lg transition-all duration-300 hover:text-n-1"
             onClick={() => cancelCommiting()}
@@ -139,13 +142,13 @@ const CommitBox = () => {
           placeholder={`${emptyErr ? emptyErr : "Commit Message"}`}
           className={`flex flex-grow bg-transparent outline-none border-none ${
             emptyErr ? "placeholder:text-red-500" : ""
-          }`}
+          } placeholder:text-sm`}
         />
         <button
           onClick={() => submitCommit()}
           className="text-n-2 text-sm bg-n-13/50 px-2 py-1 rounded-md transition-all duration-300 hover:bg-n-13/100 hover:text-n-1"
         >
-          <span>Commit</span>
+          <span>Commit & Save</span>
         </button>
       </div>
       <div className="flex-grow h-[1px] bg-slate-700 w-full" />
