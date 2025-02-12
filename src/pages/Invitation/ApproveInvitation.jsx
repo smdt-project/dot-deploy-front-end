@@ -52,14 +52,14 @@ const ApproveInvitation = () => {
             </h1>
             <p className="text-slate-300">
               Your invitation has been successfully approved. You can now log in
-              to access your account.
+              to access your account. You can now close this page.
             </p>
-            <button
+            {/* <button
               onClick={handleLoginRedirect}
               className="mt-4 px-6 py-2 bg-color-5 bg-opacity-80 text-white font-semibold rounded-md hover:bg-green-500 transition-all duration-300"
             >
               Go to Login
-            </button>
+            </button> */}
           </div>
         )}
 
