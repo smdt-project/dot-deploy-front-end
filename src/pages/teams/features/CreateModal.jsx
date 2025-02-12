@@ -3,22 +3,18 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createTeamRequest,
-  fetchTeamsRequest,
-} from "../../profile/createTeamSlice";
+} from "../../profile/organizationsSlice";
 
 const CreateModal = ({ isCreatingTeam = false, onClose }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.teams);
+  const { loading, error } = useSelector((state) => state.organizations);
 
   const handleCreateTeam = async () => {
     if (name.trim() === "" || description.trim() === "") return;
-
-    await dispatch(createTeamRequest({ name, description }));
-    await dispatch(fetchTeamsRequest());
-    onClose();
+    dispatch(createTeamRequest({ name, description }));
   };
 
   useEffect(() => {
@@ -95,10 +91,7 @@ const CreateModal = ({ isCreatingTeam = false, onClose }) => {
             <div className="flex items-center justify-end gap-2 py-4">
               <button
                 className="text-slate-400 tracking-wide font-semibold py-1 px-4 rounded-md transition-all duration-300 hover:bg-opacity-100 hover:text-slate-200 capitalize"
-                onClick={() => {
-                  dispatch(fetchTeamsRequest());
-                  onClose();
-                }}
+                onClick={onClose}
                 disabled={loading}
               >
                 Cancel
@@ -110,9 +103,7 @@ const CreateModal = ({ isCreatingTeam = false, onClose }) => {
                     : "bg-opacity-40 hover:bg-opacity-100"
                 } bg-color-5 text-slate-200 tracking-wide font-semibold py-1 px-4 rounded-full transition-all duration-300 capitalize`}
                 onClick={handleCreateTeam}
-                disabled={
-                  name.length === 0 || description.length === 0 || loading
-                }
+                disabled={name.length === 0 || description.length === 0 || loading}
               >
                 Submit
               </button>
@@ -133,9 +124,9 @@ const CreateModal = ({ isCreatingTeam = false, onClose }) => {
             <span className="text-red-500">{error}</span>
             <button
               className="text-color-5 hover:underline hover:underline-offset-2"
-              onClick={() => {}}
+              onClick={handleCreateTeam}
             >
-              Back
+              Retry
             </button>
           </div>
         )}

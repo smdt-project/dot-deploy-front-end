@@ -13,7 +13,7 @@ function TeamMembers() {
 
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
 
-  const { teams } = useSelector((state) => state.createTeam);
+  const { teams } = useSelector((state) => state.organizations);
 
   const team = teams.find((team) => team._id === id);
   const members = team.members;

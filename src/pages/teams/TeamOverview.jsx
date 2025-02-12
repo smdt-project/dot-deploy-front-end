@@ -7,13 +7,13 @@ import { GiTeamIdea } from "react-icons/gi";
 import CreateNewBox from "../community/CreateNewBox";
 import InviteMemberModal from "./features/InviteMemberModal";
 import { fetchProjectsRequest, inviteMemberRequest } from "./teamsSlice";
-import { fetchTeamsRequest } from "../profile/createTeamSlice";
+import { fetchTeamsRequest } from "../profile/organizationsSlice";
 
 const TeamOverview = () => {
   const { id } = useParams();
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const dispatch = useDispatch();
-  const { teams } = useSelector((state) => state.createTeam);
+  const { teams } = useSelector((state) => state.organizations);
   const projects = useSelector((state) => state.teams.projects);
 
   const team = teams.find((team) => team._id === id);
