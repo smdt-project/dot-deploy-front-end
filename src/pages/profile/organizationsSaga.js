@@ -79,13 +79,14 @@ function* updateTeamSaga(action) {
   const token = getUserData(true);
   try {
     yield put(resetNotifier());
-    const response = yield call(axios.put, `${API_URL}/${action.payload.id}`, action.payload, {
+    yield put(setNotifier({ loading: "Updating team..." }));
+    const response = yield call(axios.patch, `${API_URL}/${action.payload.id}`, action.payload, {
       withCredentials: true,
       headers: { Authorization: `Bearer ${token}` },
     });
     yield put(updateTeamSuccess(response.data));
-    yield put(setNotifier({ success: "Team updated successfully!" }));
     yield put(fetchTeamsRequest());
+    yield put(setNotifier({ success: "Team updated successfully!" }));
   } catch (error) {
     const message = error.response?.data?.message || error.message;
     yield put(updateTeamFailure(message));
