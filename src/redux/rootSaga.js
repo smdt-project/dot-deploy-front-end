@@ -22,7 +22,7 @@ import watchProfileSaga, {
 import { watchSearchSaga } from "../features/search/searchSaga";
 import watchInviteMemberSaga from "../pages/teams/teamSaga";
 import { watchResetPasswordSaga } from "../features/auth/resetPassword/resetPasswordSaga";
-import { watchCreateTeamsSaga } from "../pages/profile/createTeamSaga";
+import { watchOrganizationsSaga } from "../pages/profile/organizationsSaga";
 import { watchApproveInvitation } from "../pages/Invitation/approveInvitationSaga";
 
 function* rootSaga() {
@@ -45,7 +45,7 @@ function* rootSaga() {
     fork(watchSearchSaga),
     fork(watchInviteMemberSaga),
     fork(watchResetPasswordSaga),
-    fork(watchCreateTeamsSaga),
+    fork(watchOrganizationsSaga),
     fork(watchApproveInvitation),
   ]);
 }
