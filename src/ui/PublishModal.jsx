@@ -101,7 +101,7 @@ const PublishModal = () => {
       visibility: visibility,
       type: project.type,
       lngName: project.lngName,
-      code: project.type === "snippet" ? { code: currCode } : latestCode,
+      code: project.type === "snippet" ? { code: currCode, commitMsg: 'initial commit' } : {...latestCode, commitMsg: "initial commit"},
       owner: user.userId,
       tags: tags,
       teamId: teamId,

@@ -36,7 +36,6 @@ const Publish = ({ selectAction }) => {
 
   const handleSave = () => {
     if (isUserSignedIn) {
-      console.log("from save", latestCode, currCode);
       const hasChanged =
         project.type === "ui"
           ? latestCode.html.trim().length > 0 ||
