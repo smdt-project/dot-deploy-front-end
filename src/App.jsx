@@ -17,6 +17,7 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import Notifier from "./ui/Notifier";
 import TeamsPage from "./pages/teams/TeamsPage";
 import ResetPassword from "./features/auth/resetPassword/ResetPassword";
+import ApproveInvitation from "./pages/Invitation/ApproveInvitation";
 
 function CommonComponent() {
   return (
@@ -42,6 +43,11 @@ const router = createBrowserRouter([
       {
         path: "/teams/:id",
         element: <TeamsPage />,
+      },
+
+      {
+        path: "/approve-invitation",
+        element: <ApproveInvitation />,
       },
 
       {
