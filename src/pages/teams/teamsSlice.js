@@ -22,7 +22,7 @@ const teamsSlice = createSlice({
       state.isLoading = true;
       state.error = null;
     },
-    inviteMemberSuccess: (state, action) => {
+    inviteMemberSuccess: (state) => {
       state.isLoading = false;
     },
     inviteMemberFailure: (state, action) => {
