@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createTeamRequest,
+  updateTeamRequest,
 } from "../../profile/organizationsSlice";
 
 const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
@@ -14,7 +15,11 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
 
   const handleCreateTeam = async () => {
     if (name.trim() === "" || description.trim() === "") return;
-    dispatch(createTeamRequest({ name, description }));
+  if(isCreatingTeam) {
+      dispatch(createTeamRequest({ name, description}))
+    } else {
+      dispatch(updateTeamRequest({ id: team?.id, name, description}))
+    }
     onClose()
   };
 
