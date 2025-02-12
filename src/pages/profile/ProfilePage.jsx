@@ -12,12 +12,12 @@ import UserPosts from "./UserPosts";
 import UserProfileSidebar from "./UserProfileSidebar";
 import UserProjects from "./UserProjects";
 import UserTeams from "./UserTeams";
-import { fetchTeamsRequest } from "./createTeamSlice";
+import { fetchTeamsRequest } from "./organizationsSlice";
 
 const ProfilePage = () => {
   const { userId } = useParams();
   const { isUserSignedIn, user } = useSelector((state) => state.auth);
-  const { teams } = useSelector((state) => state.createTeam);
+  const { teams } = useSelector((state) => state.organizations);
   const { currTab, userData, profileChanged } = useSelector(
     (state) => state.profile
   );
