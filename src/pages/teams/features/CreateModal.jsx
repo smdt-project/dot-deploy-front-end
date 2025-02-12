@@ -5,9 +5,9 @@ import {
   createTeamRequest,
 } from "../../profile/organizationsSlice";
 
-const CreateModal = ({ isCreatingTeam = false, onClose }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
+  const [name, setName] = useState(team ? team.name : "");
+  const [description, setDescription] = useState(team ? team.name : "");
 
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.organizations);
@@ -15,6 +15,7 @@ const CreateModal = ({ isCreatingTeam = false, onClose }) => {
   const handleCreateTeam = async () => {
     if (name.trim() === "" || description.trim() === "") return;
     dispatch(createTeamRequest({ name, description }));
+    onClose()
   };
 
   useEffect(() => {
