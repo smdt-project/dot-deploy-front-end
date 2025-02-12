@@ -12,6 +12,9 @@ import {
   deleteTeamSuccess,
   deleteTeamFailure,
   deleteTeamRequest,
+  updateTeamRequest,
+  updateTeamFailure,
+  updateTeamSuccess,
 } from "./organizationsSlice";
 
 const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/organization`;
@@ -37,7 +40,6 @@ function* createTeamSaga(action) {
   const token = getUserData(true);
   try {
     yield put(resetNotifier());
-    yield put(setNotifier({ loading: "Creating team..." }));
     const response = yield call(axios.post, API_URL, action.payload, {
       withCredentials: true,
       headers: { Authorization: `Bearer ${token}` },
@@ -72,9 +74,29 @@ function* createTeamSaga(action) {
   }
 }
 
+// Update team saga
+function* updateTeamSaga(action) {
+  const token = getUserData(true);
+  try {
+    yield put(resetNotifier());
+    const response = yield call(axios.put, `${API_URL}/${action.payload.id}`, action.payload, {
+      withCredentials: true,
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    yield put(updateTeamSuccess(response.data));
+    yield put(setNotifier({ success: "Team updated successfully!" }));
+    yield put(fetchTeamsRequest());
+  } catch (error) {
+    const message = error.response?.data?.message || error.message;
+    yield put(updateTeamFailure(message));
+    yield put(setNotifier({ error: message }));
+  }
+}
+
 export function* watchOrganizationsSaga() {
   yield takeLatest(fetchTeamsRequest.type, fetchTeamsSaga);
   yield takeLatest(createTeamRequest.type, createTeamSaga);
   yield takeLatest(deleteTeamRequest.type, deleteTeamSaga)
+  yield takeLatest(updateTeamRequest.type, updateTeamSaga);
 }
 
