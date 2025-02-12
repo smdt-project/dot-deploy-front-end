@@ -10,7 +10,7 @@ import {
   maximizePublishingModal,
   resetPublishingModal,
 } from "../../editorSlice";
-import { updateProjectRequest } from "../../projectSlice";
+import { toggleCommitting, updateProjectRequest } from "../../projectSlice";
 import { setAutoSave } from "../sidebar/settingSlice";
 
 const Publish = ({ selectAction }) => {
@@ -19,7 +19,7 @@ const Publish = ({ selectAction }) => {
     (state) => state.project
   );
   const { autoSave, notifyInterval } = useSelector((state) => state.setting);
-  const { savedProject } = useSelector((state) => state.save);
+
   const { user } = useSelector((state) => state.auth);
   const { isPublishingModalMinimized } = useSelector((state) => state.editor);
   const dispatch = useDispatch();
@@ -45,15 +45,16 @@ const Publish = ({ selectAction }) => {
           : currCode.trim().length > 0;
       if (hasChanged) {
         selectAction();
-        dispatch(
-          updateProjectRequest({
-            _id: project._id,
-            code:
-              project.type === "snippet"
-                ? { ...latestCode, code: currCode }
-                : latestCode,
-          })
-        );
+        dispatch(toggleCommitting(true));
+        // dispatch(
+        //   updateProjectRequest({
+        //     _id: project._id,
+        //     code:
+        //       project.type === "snippet"
+        //         ? { ...latestCode, code: currCode }
+        //         : latestCode,
+        //   })
+        // );
       } else {
         selectAction();
       }
