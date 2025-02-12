@@ -13,9 +13,9 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.organizations);
 
-  const handleCreateTeam = async () => {
+  const handleSubmit = async () => {
     if (name.trim() === "" || description.trim() === "") return;
-  if(isCreatingTeam) {
+    if(isCreatingTeam) {
       dispatch(createTeamRequest({ name, description}))
     } else {
       dispatch(updateTeamRequest({ id: team?.id, name, description}))
@@ -24,17 +24,28 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
   };
 
   useEffect(() => {
-    if (!isCreatingTeam) {
+    if (!isCreatingTeam && team) {
+      setName(team?.name);
+      setDescription(team?.description);
+    } else {
       setName("");
       setDescription("");
     }
-  }, [isCreatingTeam]);
+  }, [isCreatingTeam, team]);
 
   return (
     <div className="absolute left-0 top-0 z-[999] w-[100dvw] h-[99dvh] backdrop-blur-sm flex items-start justify-center py-5">
       <div className="min-w-[75%] sm:min-w-[60%] sd:min-w-[50%] d:min-w-[40%] flex flex-col gap-2 p-5 mt-1 bg-slate-800 rounded-lg border-2 border-slate-700 shadow-lg shadow-n-7">
         <div className="flex items-center justify-between gap-2 text-slate-300 font-bold text-lg pb-2">
-          <span>{loading ? "Creating Team..." : "Create Team"}</span>
+          <span>
+            {loading ? 
+              isCreatingTeam ? 
+                "Creating Team..." 
+                : "Create Team" :
+              isCreatingTeam ?
+                "Create Team" : 
+                "Edit Team"}
+          </span>
           <button
             className="bg-slate-700 p-[2px] bg-opacity-70 text-slate-400 rounded-md transition-all duration-300 hover:text-slate-300 hover:bg-opacity-100"
             onClick={onClose}
@@ -61,7 +72,7 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
                 <input
                   type="text"
                   className="bg-transparent border-b-2 border-slate-700 px-2 py-1 placeholder:text-slate-500 placeholder:text-sm text-slate-200 font-semibold outline-none transition-all duration-300 focus:border-slate-500 sm:min-h-10 min-h-8"
-                  placeholder={isCreatingTeam && "Enter team name"}
+                  placeholder="Enter team name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                 />
@@ -83,11 +94,7 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
                 <input
                   type="text"
                   className="border-b-2 border-slate-700 bg-transparent px-2 py-1 placeholder:text-slate-500 placeholder:text-sm text-slate-200 font-semibold outline-none transition-all duration-300 focus:border-slate-500 small-scroll"
-                  placeholder={
-                    isCreatingTeam
-                      ? "Enter team description"
-                      : "Add description for your post"
-                  }
+                  placeholder="Enter team description"
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
                 />
@@ -104,14 +111,14 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
               </button>
               <button
                 className={`${
-                  name.length === 0 || description.length === 0
-                    ? "bg-opacity-15"
-                    : "bg-opacity-40 hover:bg-opacity-100"
-                } bg-color-5 text-slate-200 tracking-wide font-semibold py-1 px-4 rounded-full transition-all duration-300 capitalize`}
-                onClick={handleCreateTeam}
+name.length === 0 || description.length === 0
+      ? "bg-opacity-15"
+  : "bg-opacity-40 hover:bg-opacity-100"
+  } bg-color-5 text-slate-200 tracking-wide font-semibold py-1 px-4 rounded-full transition-all duration-300 capitalize`}
+                onClick={handleSubmit}
                 disabled={name.length === 0 || description.length === 0 || loading}
               >
-                Submit
+              {isCreatingTeam ? "Create" : "Update"} 
               </button>
             </div>
           </>
@@ -120,7 +127,7 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
         {loading && (
           <div className="flex-grow flex items-center justify-center h-[10dvh]">
             <span className="text-slate-400">
-              Please wait, while we create your team...
+              Please wait, while we {isCreatingTeam ? "create" : "update"} your team...
             </span>
           </div>
         )}
@@ -130,7 +137,7 @@ const CreateModal = ({ isCreatingTeam = false, onClose, team }) => {
             <span className="text-red-500">{error}</span>
             <button
               className="text-color-5 hover:underline hover:underline-offset-2"
-              onClick={handleCreateTeam}
+              onClick={handleSubmit}
             >
               Retry
             </button>
