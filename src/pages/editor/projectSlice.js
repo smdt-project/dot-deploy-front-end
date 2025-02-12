@@ -22,6 +22,7 @@ const initialState = {
   isLoading: false,
   error: false,
   isNew: true,
+  isCommititng: false,
 };
 
 const projectSlice = createSlice({
@@ -101,6 +102,9 @@ const projectSlice = createSlice({
       state.error = action.payload;
       state.isLoading = false;
     },
+    toggleCommitting: (state, action) => {
+      state.isCommititng = action.payload;
+    },
   },
 });
 
@@ -117,6 +121,7 @@ export const {
   updateProjectRequest,
   updateProjectSuccess,
   updateProjectFailure,
+  toggleCommitting,
 } = projectSlice.actions;
 
 export default projectSlice.reducer;
