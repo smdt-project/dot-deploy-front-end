@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { IoPeopleSharp } from "react-icons/io5";
-import { FaEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { inviteMemberRequest } from "./teamsSlice";

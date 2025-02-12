@@ -23,8 +23,8 @@ const Project = ({ project }) => {
 	const comments = project.comments;
 	const likes = project.likes;
 
-	const isLiked = isCurrUserLiked(project.likes, user.userId);
-	const isLoggedInUser = isEqual(isUserSignedIn && user.userId, userId);
+	const isLiked = isCurrUserLiked(project.likes, user?.userId);
+	const isLoggedInUser = isEqual(isUserSignedIn && user?.userId, userId);
 	const isSnippet = project.type === "snippet";
 
 	const openEditor = useEditorOpen();

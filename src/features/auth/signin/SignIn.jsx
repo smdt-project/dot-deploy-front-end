@@ -25,7 +25,7 @@ const SignIn = () => {
     if (isUserLoggedIn) {
       const userData = getUserData();
       dispatch(authStatus({ isUserSignedIn: true, userData: userData }));
-      navigateTo(-1);
+      navigateTo('/');
     }
   }, [isUserLoggedIn, navigateTo, dispatch]);
 
