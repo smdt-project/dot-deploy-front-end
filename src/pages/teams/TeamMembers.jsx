@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { IoPeopleSharp } from "react-icons/io5";
-import { FaEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { inviteMemberRequest } from "./teamsSlice";
@@ -13,7 +11,7 @@ function TeamMembers() {
 
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
 
-  const { teams } = useSelector((state) => state.createTeam);
+  const { teams } = useSelector((state) => state.organizations);
 
   const team = teams.find((team) => team._id === id);
   const members = team.members;
@@ -44,7 +42,7 @@ function TeamMembers() {
             <th className="py-2 px-4 border-r border-gray-600">Name</th>
             {/* <th className="py-2 px-4 border-r border-gray-600">Role</th> */}
             <th className="py-2 px-4 border-r border-gray-600">Email</th>
-            <th className="py-2 px-4">Actions</th>
+            {/* <th className="py-2 px-4">Actions</th> */}
           </tr>
         </thead>
         <tbody>
@@ -66,20 +64,20 @@ function TeamMembers() {
               <td className="py-2 px-4 border-r border-gray-600">
                 {member.email}
               </td>
-              <td className="py-2 px-4 flex gap-2 items-center">
-                {/* <button
+              {/* <td className="py-2 px-4 flex gap-2 items-center"> */}
+              {/* <button
                   className="text-green-500 bg-slate-500 bg-opacity-40  rounded-md transition-all duration-300 hover:bg-green-500 hover:text-slate-50"
                   onClick={() => openEditor("open", project.lngName, project)}
                 >
                   <FaEdit size={14} />
                 </button> */}
-                <button
+              {/* <button
                   className="text-red-500 bg-slate-500 bg-opacity-40  rounded-md transition-all duration-300 hover:bg-red-500 hover:text-red-50"
                   onClick={() => setIsDeleting(true)}
                 >
                   <MdDelete />
-                </button>
-              </td>
+                </button> */}
+              {/* </td> */}
             </tr>
           ))}
         </tbody>

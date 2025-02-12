@@ -1,15 +1,17 @@
 import { isEqual } from "lodash";
 import { useEffect, useState } from "react";
 import { CiWarning } from "react-icons/ci";
-import { MdClose, MdDelete } from "react-icons/md";
+import { MdClose, MdDelete, MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useParams } from "react-router-dom";
-import CreateModal from "../teams/features/CreateModal.jsx";
-import { fetchTeamsRequest, deleteTeamRequest } from "./createTeamSlice.js";
+import CreateModal from "../teams/features/CreateModal";
+import { fetchTeamsRequest, deleteTeamRequest } from "./organizationsSlice";
 
 const Team = ({ team }) => {
   const dispatch = useDispatch();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const { loading } = useSelector((state) => state.organizations);
 
   const handleDelete = () => {
     dispatch(deleteTeamRequest(team.id));
@@ -26,22 +28,36 @@ const Team = ({ team }) => {
           >
             {team.name}
           </NavLink>
-          <span className="text-slate-400 text-sm mt-1">
+          <span className="text-slate-300 text-sm mt-1">
             {team.description}
           </span>
-          <span className="text-slate-600 text-sm mt-1">
-            {Array.isArray(team.members) ? team.members.length : team.members}{" "}
+          <span className="text-slate-400 text-sm mt-1">
+            {Array.isArray(team.members) ? team.members.length : team.members}{" Member(s)"}
           </span>
         </div>
         <div className="flex items-center gap-3">
+          <button 
+            className="text-blue-500 h-6 bg-slate-500 bg-opacity-40 px-2 py-1 rounded-md transition-all duration-300 hover:bg-blue-500 hover:text-slate-50"
+            onClick={() => setIsEditing(true)}
+            >
+            <MdEdit />
+            </button>
           <button
             className="text-red-500 h-6 bg-slate-500 bg-opacity-40 px-2 py-1 rounded-md transition-all duration-300 hover:bg-red-500 hover:text-slate-50"
             onClick={() => setIsDeleting(true)}
+            disabled={loading}
           >
             <MdDelete />
           </button>
         </div>
       </div>
+      {isEditing && (
+      <CreateModal
+          isCreatingTeam={false}
+          onClose={() => setIsEditing(false)}
+          team={team}
+        />
+      )}
       {isDeleting && (
         <div className="p-3 bg-n-13 border-[1px] border-red-500 rounded-lg">
           <div className="flex items-center justify-between">
@@ -79,7 +95,7 @@ const UserTeams = () => {
   const dispatch = useDispatch();
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
   const { userId } = useParams();
-  const { teams, loading, error } = useSelector((state) => state.createTeam);
+  const { teams, loading, error } = useSelector((state) => state.organizations);
   const [isCreating, setIsCreating] = useState(false);
   const isLoggedInUser = isEqual(isUserSignedIn && user.userId, userId);
 

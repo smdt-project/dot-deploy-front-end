@@ -8,7 +8,7 @@ import ProfileTabs from "./ProfileTabs";
 import { useSelector } from "react-redux";
 
 const UserProfileSidebar = ({ user, isLoggedInUser }) => {
-  const { teams } = useSelector((state) => state.createTeam);
+  const { teams } = useSelector((state) => state.organizations);
 
   return (
     <div className="h-full min-w-[13rem] w-[13rem] s:min-w-64 s:w-64 items-center hidden sm:flex flex-col gap-5 bg-slate-900 bg-opacity-70 border-r-2 border-slate-800 p-2 s:p-7">

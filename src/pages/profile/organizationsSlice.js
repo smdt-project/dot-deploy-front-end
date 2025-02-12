@@ -6,8 +6,8 @@ const initialState = {
   error: null,
 };
 
-const teamsSlice = createSlice({
-  name: "teams",
+const organizationsSlice = createSlice({
+  name: "organizations",
   initialState,
   reducers: {
     fetchTeamsRequest: (state) => {
@@ -26,7 +26,7 @@ const teamsSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    createTeamSuccess: (state, action) => {
+    createTeamSuccess: (state) => {
       state.loading = false;
     },
     createTeamFailure: (state, action) => {
@@ -78,6 +78,6 @@ export const {
   deleteTeamRequest,
   deleteTeamSuccess,
   deleteTeamFailure,
-} = teamsSlice.actions;
+} = organizationsSlice.actions;
 
-export default teamsSlice.reducer;
+export default organizationsSlice.reducer;

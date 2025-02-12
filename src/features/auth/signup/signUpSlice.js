@@ -7,7 +7,7 @@ const initialState = {
 	isUserSignedUp: false,
 };
 
-const singUpSlice = createSlice({
+const signUpSlice = createSlice({
 	name: "signup",
 	initialState,
 	reducers: {
@@ -29,6 +29,6 @@ const singUpSlice = createSlice({
 });
 
 export const { signUpRequest, signUpSuccess, signUpFailure } =
-	singUpSlice.actions;
+	signUpSlice.actions;
 
-export default singUpSlice.reducer;
+export default signUpSlice.reducer;

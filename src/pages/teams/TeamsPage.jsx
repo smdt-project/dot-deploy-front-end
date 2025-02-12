@@ -8,13 +8,13 @@ import TeamOverview from "./TeamOverview";
 import TeamProjects from "./TeamProjects";
 import TeamMembers from "./TeamMembers";
 import { MdArrowBack } from "react-icons/md";
-import { fetchTeamsRequest } from "../profile/createTeamSlice";
+import { fetchTeamsRequest } from "../profile/organizationsSlice";
 import { fetchProjectsRequest } from "./teamsSlice";
 
 function TeamsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { teams } = useSelector((state) => state.createTeam);
+  const { teams } = useSelector((state) => state.organizations);
   const projects = useSelector((state) => state.teams.projects);
   const dispatch = useDispatch();
 

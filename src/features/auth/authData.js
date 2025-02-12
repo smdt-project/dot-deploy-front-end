@@ -1,17 +1,17 @@
 import Cookies from "js-cookie";
 
 export const storeUserData = (user) => {
-	const userData = user.data;
-	const jwt = user.token;
+	const userData = user?.data;
+	const jwt = user?.token;
 	const expiration = Date.now() + 24 * 60 * 60 * 1000;
 	const data = {
 		loginAt: Date.now(),
 		expiry: expiration,
-		name: userData.name,
-		userId: userData._id,
-		email: userData.email,
-		bio: userData.bio,
-		avatarUrl: userData.avatarUrl,
+		name: userData?.name,
+		userId: userData?._id,
+		email: userData?.email,
+		bio: userData?.bio,
+		avatarUrl: userData?.avatarUrl,
 	};
 
 	Cookies.set("jwt", jwt, { expires: 1000 * 60 * 60 * 24 });

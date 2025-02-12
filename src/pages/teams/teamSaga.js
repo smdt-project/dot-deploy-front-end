@@ -2,7 +2,6 @@ import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 import {
   inviteMemberRequest,
-  inviteMemberSuccess,
   inviteMemberFailure,
   setProjects,
   fetchProjectsRequest,
@@ -19,7 +18,7 @@ function* workInviteMemberSaga(action) {
     yield put(resetNotifier());
     yield put(setNotifier({ loading: "Sending invitation..." }));
 
-    const response = yield call(
+    yield call(
       axios.post,
       `${
         import.meta.env.VITE_REACT_APP_API_URL
@@ -77,42 +76,6 @@ function* fetchProjectsSaga(action) {
     yield put(setNotifier({ error: message }));
   }
 }
-
-// function* approveInvitationSaga(action) {
-//   const { teamId, invitationId } = action.payload;
-//   const token = getUserData(true);
-
-//   try {
-//     yield put(resetNotifier());
-//     yield put(setNotifier({ loading: "Approving invitation..." }));
-
-//     const response = yield call(
-//       axios.post,
-//       `${
-//         import.meta.env.VITE_REACT_APP_API_URL
-//       }/api/v1/organization/invitations/${invitationId}/${teamId}`,
-//       {},
-//       {
-//         withCredentials: true,
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     yield put(resetNotifier());
-//     yield put(setNotifier({ success: "Invitation approved successfully!" }));
-//   } catch (error) {
-//     const message = error.response
-//       ? error.response.data
-//         ? error.response.data.message
-//         : error.message
-//       : error.message;
-//     yield put(inviteMemberFailure(message));
-//     yield put(resetNotifier());
-//     yield put(setNotifier({ error: " Failed to approve invitation " }));
-//   }
-// }
 
 export function* watchInviteMemberSaga() {
   yield takeLatest(inviteMemberRequest.type, workInviteMemberSaga);
