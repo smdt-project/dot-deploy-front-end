@@ -4,12 +4,13 @@ import { CiWarning } from "react-icons/ci";
 import { MdClose, MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useParams } from "react-router-dom";
-import CreateModal from "../teams/features/CreateModal.jsx";
-import { fetchTeamsRequest, deleteTeamRequest } from "./createTeamSlice.js";
+import CreateModal from "../teams/features/CreateModal";
+import { fetchTeamsRequest, deleteTeamRequest } from "./organizationsSlice";
 
 const Team = ({ team }) => {
   const dispatch = useDispatch();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { loading } = useSelector((state) => state.organizations);
 
   const handleDelete = () => {
     dispatch(deleteTeamRequest(team.id));
@@ -37,6 +38,7 @@ const Team = ({ team }) => {
           <button
             className="text-red-500 h-6 bg-slate-500 bg-opacity-40 px-2 py-1 rounded-md transition-all duration-300 hover:bg-red-500 hover:text-slate-50"
             onClick={() => setIsDeleting(true)}
+            disabled={loading}
           >
             <MdDelete />
           </button>
@@ -79,7 +81,7 @@ const UserTeams = () => {
   const dispatch = useDispatch();
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
   const { userId } = useParams();
-  const { teams, loading, error } = useSelector((state) => state.createTeam);
+  const { teams, loading, error } = useSelector((state) => state.organizations);
   const [isCreating, setIsCreating] = useState(false);
   const isLoggedInUser = isEqual(isUserSignedIn && user.userId, userId);
 
