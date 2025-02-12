@@ -1,3 +1,4 @@
+import { BsXCircleFill, BsCheckCircleFill } from "react-icons/bs";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -55,7 +56,7 @@ const ApproveInvitation = () => {
             </p>
             <button
               onClick={handleLoginRedirect}
-              className="mt-4 px-6 py-2 bg-green-600 bg-opacity-80 text-white font-semibold rounded-md hover:bg-green-500 transition-all duration-300"
+              className="mt-4 px-6 py-2 bg-color-5 bg-opacity-80 text-white font-semibold rounded-md hover:bg-green-500 transition-all duration-300"
             >
               Go to Login
             </button>
@@ -73,10 +74,10 @@ const ApproveInvitation = () => {
               support or try again later.
             </p>
             <button
-              onClick={handleLoginRedirect}
-              className="mt-4 px-6 py-2 bg-red-600 bg-opacity-80 text-white font-semibold rounded-md hover:bg-red-500 transition-all duration-300"
+              onClick={() => window.location.reload()}
+              className="mt-4 px-6 py-2 bg-color-5 bg-opacity-80 text-white font-semibold rounded-md hover:bg-red-500 transition-all duration-300"
             >
-              Go to Login
+              Refresh
             </button>
           </div>
         )}
