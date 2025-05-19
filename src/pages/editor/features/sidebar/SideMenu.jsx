@@ -3,6 +3,7 @@ import Explore from "./Explore";
 import Settings from "./Setting";
 import SideSearch from "./SideSearch";
 import Versions from "./Versions";
+import Chat from "../../../../../../src/pages/editor/features/sidebar/Chat";
 
 const SideMenu = () => {
   const { currTab, currTabTitle } = useSelector((state) => state.sidebar);
@@ -20,6 +21,8 @@ const SideMenu = () => {
         <SideSearch />
       ) : currTab === "setting" ? (
         <Settings />
+      ) : currTab === "chat" ? (
+        <Chat />
       ) : (
         currTab === "version" && <Versions />
       )}
