@@ -1,5 +1,5 @@
 import axios from "axios";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, select } from "redux-saga/effects";
 import {
   sendMessageRequest,
   sendMessageSuccess,
@@ -10,6 +10,13 @@ import { setNotifier } from "../../../../ui/notifierSlice";
 
 function* workSendMessage(action) {
   const token = getUserData(true);
+  const state = yield select();
+  const { messages } = state.chat;
+
+  // Prepare history string
+  const history = messages
+    .map((msg) => `${msg.role === "user" ? "User" : "AI"}: ${msg.content}`)
+    .join("\n");
 
   try {
     const response = yield call(
@@ -20,6 +27,7 @@ function* workSendMessage(action) {
         language: action.payload.language,
         code: action.payload.code,
         question: action.payload.question,
+        history: history,
       },
       {
         withCredentials: true,
@@ -29,7 +37,7 @@ function* workSendMessage(action) {
       }
     );
 
-    if (response.data.success) {
+    if (response.data.message === "success") {
       yield put(sendMessageSuccess({ data: response.data.data }));
     } else {
       yield put(sendMessageFailure(response.data.message));
