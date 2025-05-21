@@ -3,31 +3,24 @@ import { IoSend, IoClose } from "react-icons/io5";
 import { TbBrandOpenai } from "react-icons/tb";
 import { SiGooglegemini, SiMeta } from "react-icons/si";
 import { FaRobot, FaChevronDown } from "react-icons/fa";
-import { BsStars } from "react-icons/bs";
-import { useSelector } from "react-redux";
+import { BsRobot, BsStars } from "react-icons/bs";
+import { useSelector, useDispatch } from "react-redux";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { sendMessageRequest, setSelectedModel, clearChat } from "./chatSlice";
 
 const Chat = () => {
-  const [messages, setMessages] = useState([]);
+  const dispatch = useDispatch();
+  const { messages, isLoading, selectedModel, models } = useSelector(
+    (state) => state.chat
+  );
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("claude-3.7");
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const { user } = useSelector((state) => state.auth);
-
-  const models = [
-    { id: "claude-3.7", name: "Claude 3.7", icon: <TbBrandOpenai /> },
-    { id: "gemini-pro", name: "Gemini Pro", icon: <SiGooglegemini /> },
-    { id: "deepseek", name: "DeepSeek", icon: <FaRobot /> },
-    { id: "llama-3", name: "Llama 3", icon: <SiMeta /> },
-    { id: "mistral", name: "Mistral", icon: <BsStars /> },
-    { id: "phi-3", name: "Phi-3", icon: <FaRobot /> },
-    { id: "qwen", name: "Qwen", icon: <FaRobot /> },
-  ];
+  const { currLng, currCode } = useSelector((state) => state.project);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,45 +31,21 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    // Focus the input field when the component mounts
     inputRef.current?.focus();
   }, []);
 
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
-    const userMessage = {
-      role: "user",
-      content: input,
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    dispatch(
+      sendMessageRequest({
+        selectedModel,
+        language: currLng,
+        code: currCode,
+        question: input,
+      })
+    );
     setInput("");
-    setIsLoading(true);
-
-    // Simulate API call to selected model
-    setTimeout(() => {
-      const assistantMessage = {
-        role: "assistant",
-        content: `This is a simulated response from the ${
-          models.find((m) => m.id === selectedModel).name
-        } model. In a real implementation, this would be an actual response from the API.
-        
-\`\`\`javascript
-// Example code response
-function exampleFunction() {
-  console.log("This is an example response");
-  return true;
-}
-\`\`\``,
-        timestamp: new Date().toISOString(),
-        model: selectedModel,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-      setIsLoading(false);
-    }, 1000);
   };
 
   const handleKeyDown = (e) => {
@@ -93,7 +62,24 @@ function exampleFunction() {
 
   const getModelIcon = (modelId) => {
     const model = models.find((m) => m.id === modelId);
-    return model ? model.icon : <FaRobot />;
+    if (!model) return <FaRobot />;
+
+    switch (model.icon) {
+      case "SiGooglegemini":
+        return <SiGooglegemini />;
+      case "FaRobot":
+        return <FaRobot />;
+      case "BsRobot":
+        return <BsRobot />;
+      case "SiMeta":
+        return <SiMeta />;
+      case "BsStars":
+        return <BsStars />;
+      case "TbBrandOpenai":
+        return <TbBrandOpenai />;
+      default:
+        return <FaRobot />;
+    }
   };
 
   const getModelName = (modelId) => {
@@ -101,19 +87,24 @@ function exampleFunction() {
     return model ? model.name : "Unknown Model";
   };
 
-  const clearChat = () => {
-    setMessages([]);
+  const handleClearChat = () => {
+    dispatch(clearChat());
+  };
+
+  const handleModelChange = (modelId) => {
+    dispatch(setSelectedModel(modelId));
+    setIsModelDropdownOpen(false);
   };
 
   return (
-    <div className="flex flex-col h-full  text-slate-300 border-l border-slate-700">
+    <div className="flex flex-col h-full text-slate-300 border-l border-slate-700">
       {/* Header with model selector */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-slate-700 bg-[#252526]">
         <div className="text-sm font-medium">AI Assistant</div>
 
         <div className="flex items-center gap-2">
           <button
-            onClick={clearChat}
+            onClick={handleClearChat}
             className="p-1 text-slate-400 hover:text-slate-200 transition-colors"
             title="Clear chat"
           >
@@ -141,12 +132,11 @@ function exampleFunction() {
                       className={`flex items-center gap-2 w-full px-4 py-2 text-left text-xs hover:bg-[#3e3e3e] transition-colors ${
                         selectedModel === model.id ? "bg-[#3e3e3e]" : ""
                       }`}
-                      onClick={() => {
-                        setSelectedModel(model.id);
-                        setIsModelDropdownOpen(false);
-                      }}
+                      onClick={() => handleModelChange(model.id)}
                     >
-                      <span className="text-slate-300">{model.icon}</span>
+                      <span className="text-slate-300">
+                        {getModelIcon(model.id)}
+                      </span>
                       <span>{model.name}</span>
                     </button>
                   ))}
