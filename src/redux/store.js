@@ -13,26 +13,28 @@ import sidebarReducer from "../pages/editor/features/sidebar/sidebarSlice";
 import projectReducer from "../pages/editor/projectSlice";
 import profileReducer from "../pages/profile/profileSlice";
 import notifierReducer from "../ui/notifierSlice";
+import chatReducer from "../pages/editor/features/sidebar/chatSlice";
 export const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
-	reducer: {
-		auth: authReducer,
-		community: communityReducer,
-		editor: editorReducer,
-		notifier: notifierReducer,
-		post: postReducer,
-		profile: profileReducer,
-		project: projectReducer,
-		setting: settingReducer,
-		sidebar: sidebarReducer,
-		signUp: signUpReducer,
-		signIn: signInReducer,
-		save: saveReducer,
-		search: searchReducer,
-	},
-	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat(sagaMiddleware),
+  reducer: {
+    auth: authReducer,
+    community: communityReducer,
+    editor: editorReducer,
+    notifier: notifierReducer,
+    post: postReducer,
+    profile: profileReducer,
+    project: projectReducer,
+    setting: settingReducer,
+    sidebar: sidebarReducer,
+    signUp: signUpReducer,
+    signIn: signInReducer,
+    save: saveReducer,
+    search: searchReducer,
+    chat: chatReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(sagaMiddleware),
 });
 
 export default store;
