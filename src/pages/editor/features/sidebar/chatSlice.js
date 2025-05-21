@@ -11,12 +11,14 @@ const initialState = {
       name: "Gemini 2.0 Flash",
       icon: "SiGooglegemini",
     },
+
+    { id: "DeepSeek-R1", name: "DeepSeek-R1", icon: "BsRobot" },
+    { id: "OpenChat 3.5 7B", name: "OpenChat 3.5 7B", icon: "TbBrandOpenai" },
     {
       id: "Mistral 7B Instruct",
       name: "Mistral 7B Instruct",
       icon: "FaRobot",
     },
-    { id: "DeepSeek-R1", name: "DeepSeek-R1", icon: "BsRobot" },
     {
       id: "Meta Llama 3 8B Instruct",
       name: "Meta Llama 3 8B Instruct",
@@ -27,7 +29,6 @@ const initialState = {
       name: "Microsoft Phi 3 Medium 128K Instruct",
       icon: "BsStars",
     },
-    { id: "OpenChat 3.5 7B", name: "OpenChat 3.5 7B", icon: "TbBrandOpenai" },
     {
       id: "Qwen 2.5 Coder 32B Instruct",
       name: "Qwen 2.5 Coder 32B Instruct",
