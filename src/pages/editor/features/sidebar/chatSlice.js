@@ -13,7 +13,11 @@ const initialState = {
     },
 
     { id: "DeepSeek-R1", name: "DeepSeek-R1", icon: "BsRobot" },
-    { id: "OpenChat 3.5 7B", name: "OpenChat 3.5 7B", icon: "TbBrandOpenai" },
+    {
+      id: "OpenGVLab: InternVL3 14B",
+      name: "OpenGVLab: InternVL3 14B",
+      icon: "TbBrandOpenai",
+    },
     {
       id: "Mistral 7B Instruct",
       name: "Mistral 7B Instruct",
@@ -23,6 +27,11 @@ const initialState = {
       id: "Meta Llama 3 8B Instruct",
       name: "Meta Llama 3 8B Instruct",
       icon: "SiMeta",
+    },
+    {
+      id: "NVIDIA: Llama 3.3 Nemotron Super 49B v1",
+      name: "NVIDIA: Llama 3.3 Nemotron Super 49B v1",
+      icon: "TbBrandOpenai",
     },
     {
       id: "Microsoft Phi 3 Medium 128K Instruct",
