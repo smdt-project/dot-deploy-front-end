@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { BiTerminal } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { GiHelp } from "react-icons/gi";
@@ -9,8 +9,6 @@ import {
   TbSettings,
   TbWorld,
 } from "react-icons/tb";
-import { IoChatbubbleOutline } from "react-icons/io5";
-
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import EditorToolTip from "../../../../ui/EditorToolTip";
@@ -131,13 +129,6 @@ const EditorSidebar = () => {
           isDisabled: isPublishing,
           isLink: true,
           link: "/",
-        },
-        {
-          icon: <IoChatbubbleOutline key={7} />,
-          name: "chat",
-          title: "Chat",
-          isDisabled: isCreating || isPublishing,
-          isLink: false,
         },
         0,
         {

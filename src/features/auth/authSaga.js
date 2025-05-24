@@ -16,7 +16,7 @@ function* workUserDataSagas() {
 	try {
 		const response = yield call(
 			axios.get,
-			`${import.meta.env.VITE_REACT_APP_API_URL}api/v1/users/me`,
+			`${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/users/me`,
 			{
 				withCredentials: true,
 				headers: {

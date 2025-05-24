@@ -15,7 +15,8 @@ import HomePage from "./pages/home/HomePage";
 import DotCodeProfile from "./pages/profile/DotCodeProfile";
 import ProfilePage from "./pages/profile/ProfilePage";
 import Notifier from "./ui/Notifier";
-import TeamsPage from "../client/src/pages/Teams/TeamsPage";
+import TeamsPage from "./pages/teams/TeamsPage";
+import ResetPassword from "./features/auth/resetPassword/ResetPassword";
 
 function CommonComponent() {
   return (
@@ -33,10 +34,6 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
-      },
-      {
-        path: "/teams",
-        element: <TeamsPage />,
       },
       {
         path: "/editor",

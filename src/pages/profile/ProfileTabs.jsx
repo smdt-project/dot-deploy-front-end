@@ -9,6 +9,7 @@ const tabs = [
 	{ name: "projects", userT: "My projects", icon: <RiCodeBlock /> },
 	{ name: "posts", userT: "My posts", icon: <BsPostcard /> },
 	{ name: "comments", userT: "My comments", icon: <FaRegComment /> },
+	{ name: "teams", userT: "My teams", icon: <BsPostcard /> },
 ];
 
 const ProfileBtn = ({ tab, isUser, isSideBar }) => {

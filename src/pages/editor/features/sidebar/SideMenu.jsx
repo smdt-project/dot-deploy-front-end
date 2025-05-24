@@ -18,8 +18,6 @@ const SideMenu = () => {
         <Explore />
       ) : currTab === "search" ? (
         <SideSearch />
-      ) : currTab === "chat" ? (
-        <Chat />
       ) : (
         currTab === "setting" && <Settings />
       )}

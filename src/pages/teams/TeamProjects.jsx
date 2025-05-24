@@ -1,3 +1,4 @@
+import React from "react";
 import { isEqual } from "lodash";
 import { useState } from "react";
 import { BiComment, BiLike, BiSolidComment, BiSolidLike } from "react-icons/bi";
@@ -11,7 +12,31 @@ import { useEditorOpen } from "../../hooks/useEditorOpen";
 import LngName from "../../ui/LngName";
 import { isCurrUserLiked } from "../../utils/validators";
 import Comment from "../community/features/comBody/Comment";
-import { deleteItemRequest } from "./profileSlice";
+
+// const projects = [
+//   {
+//     _id: "1",
+//     name: "Project 1",
+//     description: "This is project 1",
+//     lngName: "dotcode",
+//     type: "project",
+//     likes: [
+//       {
+//         _id: "1",
+//         userId: "1",
+//       },
+//     ],
+//     comments: [
+//       {
+//         _id: "1",
+//         comment: "This is a comment",
+//         userId: "1",
+//         userName: "User 1",
+//         userAvatar: "https://randomuser.me/api/portraits",
+//       },
+//     ],
+//   },
+// ];
 
 const Project = ({ project }) => {
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
@@ -23,8 +48,8 @@ const Project = ({ project }) => {
   const comments = project.comments;
   const likes = project.likes;
 
-  const isLiked = isCurrUserLiked(project.likes, user?.userId);
-  const isLoggedInUser = isEqual(isUserSignedIn && user?.userId, userId);
+  const isLiked = isCurrUserLiked(project.likes, user.userId);
+  const isLoggedInUser = isEqual(isUserSignedIn && user.userId, userId);
   const isSnippet = project.type === "snippet";
 
   const openEditor = useEditorOpen();
@@ -35,7 +60,7 @@ const Project = ({ project }) => {
   const detailProject = () => navigateTo(`/community/project/${project._id}`);
 
   const handleDelete = () => {
-    dispatch(deleteItemRequest({ itemName: "project", id: project._id }));
+    // dispatch(deleteItemRequest({ itemName: "project", id: project._id }));
     setIsDeleting(false);
   };
 
@@ -183,15 +208,121 @@ const Project = ({ project }) => {
   );
 };
 
-const UserProjects = () => {
-  const { userData } = useSelector((state) => state.profile);
+function TeamProjects() {
+  const { teamData } = useSelector((state) => state.teams);
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
   const { userId } = useParams();
 
-  const projects = userData.projects;
-  const isLoggedInUser = isEqual(isUserSignedIn && user?.userId, userId);
+  // const projects = teamData?.projects;
+  const projects = [
+    {
+      _id: "1",
+      name: "Project Alpha",
+      description: "This is a project for developing an AI-powered chatbot.",
+      lngName: "python",
+      type: "project",
+      likes: [
+        { _id: "1", userId: "2" },
+        { _id: "2", userId: "3" },
+      ],
+      comments: [
+        {
+          _id: "1",
+          comment: "This project looks amazing!",
+          userId: "2",
+          userName: "John Doe",
+          userAvatar: "https://randomuser.me/api/portraits/men/1.jpg",
+        },
+        {
+          _id: "2",
+          comment: "I want to contribute to this.",
+          userId: "3",
+          userName: "Jane Smith",
+          userAvatar: "https://randomuser.me/api/portraits/women/1.jpg",
+        },
+      ],
+    },
+    {
+      _id: "2",
+      name: "Project Beta",
+      description: "A new JavaScript library to enhance web UI components.",
+      lngName: "javascript",
+      type: "project",
+      likes: [
+        { _id: "3", userId: "1" },
+        { _id: "4", userId: "4" },
+      ],
+      comments: [
+        {
+          _id: "3",
+          comment: "Great work! Can't wait to see it finished.",
+          userId: "1",
+          userName: "Michael Feleke",
+          userAvatar: "https://randomuser.me/api/portraits/men/2.jpg",
+        },
+      ],
+    },
+    {
+      _id: "3",
+      name: "Project Gamma",
+      description: "Open-source project for creating interactive 3D models.",
+      lngName: "typescript",
+      type: "project",
+      likes: [
+        { _id: "5", userId: "1" },
+        { _id: "6", userId: "2" },
+        { _id: "7", userId: "3" },
+      ],
+      comments: [
+        {
+          _id: "4",
+          comment: "Excited for this! 3D models are the future.",
+          userId: "2",
+          userName: "John Doe",
+          userAvatar: "https://randomuser.me/api/portraits/men/1.jpg",
+        },
+        {
+          _id: "5",
+          comment: "Would love to help with this project.",
+          userId: "3",
+          userName: "Jane Smith",
+          userAvatar: "https://randomuser.me/api/portraits/women/1.jpg",
+        },
+      ],
+    },
+    {
+      _id: "4",
+      name: "Project Delta",
+      description:
+        "A tool for monitoring and analyzing data streams in real-time.",
+      lngName: "go",
+      type: "project",
+      likes: [
+        { _id: "8", userId: "4" },
+        { _id: "9", userId: "5" },
+      ],
+      comments: [
+        {
+          _id: "6",
+          comment: "This is an important tool for data analysts.",
+          userId: "4",
+          userName: "David Lee",
+          userAvatar: "https://randomuser.me/api/portraits/men/3.jpg",
+        },
+        {
+          _id: "7",
+          comment: "I want to see more updates!",
+          userId: "5",
+          userName: "Laura Chen",
+          userAvatar: "https://randomuser.me/api/portraits/women/2.jpg",
+        },
+      ],
+    },
+  ];
 
-  return projects.length > 0 ? (
+  const isLoggedInUser = isEqual(isUserSignedIn && user.userId, userId);
+
+  return projects?.length > 0 ? (
     <div className="flex flex-col justify-center sd:items-start gap-3 sd:gap-7 px-2 sd:flex-row sd:flex-wrap pb-3">
       {projects.map((project, index) => (
         <Project project={project} key={index} />
@@ -202,7 +333,7 @@ const UserProjects = () => {
       {isLoggedInUser ? (
         <>
           <span className="text-slate-300 text-lg">
-            You have no projects yet, create and share to the community.
+            Team has no projects yet, create one.
           </span>
           <NavLink
             className="text-slate-300 bg-slate-700 bg-opacity-60 px-4 py-2 rounded-full transition-all duration-300 hover:text-slate-50 hover:bg-opacity-80"
@@ -214,7 +345,7 @@ const UserProjects = () => {
       ) : (
         <>
           <span className="text-slate-300 font-semibold tracking-wide text-lg">
-            User has no projects yet.
+            Team has no projects yet.
           </span>
           <NavLink
             to={"/community"}
@@ -226,6 +357,6 @@ const UserProjects = () => {
       )}
     </div>
   );
-};
+}
 
-export default UserProjects;
+export default TeamProjects;

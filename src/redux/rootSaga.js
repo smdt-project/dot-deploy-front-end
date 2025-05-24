@@ -41,6 +41,8 @@ function* rootSaga() {
     fork(watchPostDeleteSagas),
     fork(watchItemDeleteSaga),
     fork(watchSearchSaga),
+    fork(watchInviteMemberSaga),
+    fork(watchResetPasswordSaga),
   ]);
 }
 
