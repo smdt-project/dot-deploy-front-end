@@ -20,6 +20,7 @@ import watchProfileSaga, {
   watchItemDeleteSaga,
 } from "../pages/profile/profileSaga";
 import { watchSearchSaga } from "../features/search/searchSaga";
+import watchSendMessageSaga from "../pages/editor/features/sidebar/chatSaga";
 import watchInviteMemberSaga from "../pages/teams/teamSaga";
 import { watchResetPasswordSaga } from "../features/auth/resetPassword/resetPasswordSaga";
 import { watchOrganizationsSaga } from "../pages/profile/organizationsSaga";
@@ -29,6 +30,7 @@ import watchFetchGhostTextSaga from "../pages/editor/completionSaga";
 
 function* rootSaga() {
   yield all([
+    fork(watchSendMessageSaga),
     fork(watchSignUpSagas),
     fork(watchSignInSagas),
     fork(watchLogoutSagas),

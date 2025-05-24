@@ -14,7 +14,6 @@ const Account = () => {
 
   const [isOpened, setIsOpened] = useState(false);
   const { isUserSignedIn, user } = useSelector((state) => state.auth);
-
   const loginDate = user ? calcDayDifference(Date.now(), user.loginAt) : "";
 
   const handleLogOut = () => {
@@ -39,7 +38,7 @@ const Account = () => {
             <div
               className={`flex items-center justify-center min-w-6 min-h-6 w-6 h-6 self-start rounded-full border-[1px] border-color-5 bg-color-7 text-slate-950 text-2xl font-normal`}
             >
-              {user && user.name[0]}
+              {user.name[0]}
             </div>
           )}
           <span className="hidden sm:flex md:flex sm:max-w-44 sm:line-clamp-1 md:max-w-44 md:line-clamp-1">

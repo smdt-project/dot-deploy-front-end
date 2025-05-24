@@ -132,6 +132,7 @@ const EditorCodeBox = () => {
         ? project.code.find((c) => c.version === selectedVersion).js
         : latestCode.js;
   }
+
   const lng = currLng;
   const code =
     project.type === "snippet" ? latestCode.code : latestCode[currLng];

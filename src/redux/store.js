@@ -18,6 +18,7 @@ import resetPasswordReducer from "../features/auth/resetPassword/resetPasswordSl
 import organizationsReducer from "../pages/profile/organizationsSlice";
 import approveInvitationReducer from "../pages/Invitation/approveInvitationSlice";
 import completionReducer from "../pages/editor/completionSlice";
+import chatReducer from "../pages/editor/features/sidebar/chatSlice";
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -41,6 +42,7 @@ const store = configureStore({
     organizations: organizationsReducer,
     approveInvitation: approveInvitationReducer,
     completion: completionReducer,
+    chat: chatReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),

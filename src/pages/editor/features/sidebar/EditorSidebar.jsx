@@ -9,7 +9,6 @@ import {
   TbSettings,
   TbWorld,
 } from "react-icons/tb";
-import { IoIosGitBranch } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import EditorToolTip from "../../../../ui/EditorToolTip";
@@ -83,6 +82,8 @@ const Spacer = () => {
 const EditorSidebar = () => {
   const { isCreating, isPublishing } = useSelector((state) => state.editor);
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
+  const { project } = useSelector((state) => state.project);
+
   return (
     <div className="h-full w-10 flex flex-col items-center bg-[#353b47] text-2xl sm:pb-2 border-r-[1px] border-slate-500">
       {[
@@ -101,13 +102,6 @@ const EditorSidebar = () => {
           isLink: false,
         },
         {
-          icon: <IoIosGitBranch key={3} />,
-          name: "version",
-          title: "Versions",
-          isDisabled: isCreating || isPublishing,
-          isLink: false,
-        },
-        {
           icon: <BiTerminal key={3} />,
           name: "terminal",
           title: "Terminal",
@@ -115,7 +109,6 @@ const EditorSidebar = () => {
           isLink: true,
           isBtn: true,
         },
-
         {
           icon: <TbSettings key={3} />,
           name: "setting",
