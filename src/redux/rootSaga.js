@@ -25,6 +25,8 @@ import { watchResetPasswordSaga } from "../features/auth/resetPassword/resetPass
 import { watchOrganizationsSaga } from "../pages/profile/organizationsSaga";
 import { watchApproveInvitation } from "../pages/Invitation/approveInvitationSaga";
 
+import watchFetchGhostTextSaga from "../pages/editor/completionSaga";
+
 function* rootSaga() {
   yield all([
     fork(watchSignUpSagas),
@@ -47,6 +49,7 @@ function* rootSaga() {
     fork(watchResetPasswordSaga),
     fork(watchOrganizationsSaga),
     fork(watchApproveInvitation),
+    fork(watchFetchGhostTextSaga),
   ]);
 }
 
