@@ -1,7 +1,7 @@
 import { indentUnit } from "@codemirror/language";
 import { searchKeymap } from "@codemirror/search";
 import CodeMirror, { EditorView, keymap, oneDark } from "@uiw/react-codemirror";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useCode } from "../../hooks/useCode";
 import { getLngInfo } from "../../utils/helpers";
@@ -13,6 +13,7 @@ import {
   ghostTextField,
   GhostTextWidget,
 } from "./ghostTextExtension";
+import CompletionLoader from "../../ui/CompletionLoader";
 
 const Editor = ({ code }) => {
   const { codeFontSize, codeTabSize, closeBrackets, lineNo, foldGut, holder } =
@@ -27,36 +28,89 @@ const Editor = ({ code }) => {
   const tabSize = Array.from({ length: codeTabSize }, () => " ").join("");
   const [editorView, setEditorView] = useState(null);
   const updateCode = useCode();
+
+  // Refs for cleanup
   const debounceTimerRef = useRef(null);
+  const acceptanceTimerRef = useRef(null);
+  const justAcceptedTimerRef = useRef(null);
   const cursorPositionRef = useRef(0);
-  const [acceptedSuggestion, setAcceptedSuggestion] = useState(false);
   const lastSuggestionRef = useRef(null);
   const currentLanguageRef = useRef(currLng);
-  const justAcceptedRef = useRef(false); // Track if we just accepted a suggestion
+  const justAcceptedRef = useRef(false);
+  const isMountedRef = useRef(true);
+
+  const [acceptedSuggestion, setAcceptedSuggestion] = useState(false);
 
   const mode = getLngInfo(currLng).mode;
 
+  // Cleanup function for all timers
+  const clearAllTimers = useCallback(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    if (acceptanceTimerRef.current) {
+      clearTimeout(acceptanceTimerRef.current);
+      acceptanceTimerRef.current = null;
+    }
+    if (justAcceptedTimerRef.current) {
+      clearTimeout(justAcceptedTimerRef.current);
+      justAcceptedTimerRef.current = null;
+    }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+      clearAllTimers();
+
+      // Cleanup editor event listeners
+      if (editorView && editorView._ghostTextCleanup) {
+        editorView._ghostTextCleanup();
+      }
+    };
+  }, [clearAllTimers, editorView]);
+
+  // Language change effect with proper cleanup
   useEffect(() => {
     if (currentLanguageRef.current !== currLng) {
       currentLanguageRef.current = currLng;
+
+      // Clear all timers when language changes
+      clearAllTimers();
+
       dispatch(clearGhostText());
       if (editorView) {
         editorView.dispatch({
           effects: clearGhostTextEffect.of(null),
         });
       }
+
+      // Reset all state
       setAcceptedSuggestion(false);
       lastSuggestionRef.current = null;
       justAcceptedRef.current = false;
     }
-  }, [currLng, editorView, dispatch]);
+
+    // Cleanup function for this effect
+    return () => {
+      // Any specific cleanup for language change can go here
+    };
+  }, [currLng, editorView, dispatch, clearAllTimers]);
 
   const handleEditorCreate = (view) => {
+    if (!isMountedRef.current) return;
+
     setEditorView(view);
     cursorPositionRef.current = view.state.selection.main.head;
 
     // Add high-priority DOM event listener for Tab
     const handleKeyDown = (e) => {
+      if (!isMountedRef.current) return;
+
       if (e.key === "Tab") {
         console.log("DOM Tab event intercepted");
 
@@ -109,14 +163,21 @@ const Editor = ({ code }) => {
           // Update cursor position ref
           cursorPositionRef.current = endPosition;
 
+          // Clear existing timers before setting new ones
+          clearAllTimers();
+
           // Reset the flags after a delay
-          setTimeout(() => {
-            setAcceptedSuggestion(false);
+          acceptanceTimerRef.current = setTimeout(() => {
+            if (isMountedRef.current) {
+              setAcceptedSuggestion(false);
+            }
           }, 3000);
 
-          setTimeout(() => {
-            justAcceptedRef.current = false;
-          }, 1000); // Shorter delay for this flag
+          justAcceptedTimerRef.current = setTimeout(() => {
+            if (isMountedRef.current) {
+              justAcceptedRef.current = false;
+            }
+          }, 1000);
 
           return false;
         }
@@ -134,22 +195,15 @@ const Editor = ({ code }) => {
     };
   };
 
-  // Cleanup event listeners when component unmounts
-  useEffect(() => {
-    return () => {
-      if (editorView && editorView._ghostTextCleanup) {
-        editorView._ghostTextCleanup();
-      }
-    };
-  }, [editorView]);
-
+  // Ghost text suggestion effect with proper cleanup
   useEffect(() => {
     if (
       editorView &&
       ghostTextSuggestion &&
       !isGhostTextLoading &&
       !acceptedSuggestion &&
-      !justAcceptedRef.current // Don't show suggestions immediately after acceptance
+      !justAcceptedRef.current &&
+      isMountedRef.current
     ) {
       console.log("Received suggestion:", ghostTextSuggestion);
 
@@ -171,16 +225,18 @@ const Editor = ({ code }) => {
           }),
         });
       }
-    } else if (!ghostTextSuggestion) {
-      if (editorView) {
-        editorView.dispatch({
-          effects: clearGhostTextEffect.of(null),
-        });
-      }
+    } else if (!ghostTextSuggestion && editorView && isMountedRef.current) {
+      editorView.dispatch({
+        effects: clearGhostTextEffect.of(null),
+      });
     }
+
+    // No cleanup needed for this effect as it's purely reactive
   }, [ghostTextSuggestion, isGhostTextLoading, editorView, acceptedSuggestion]);
 
   const handleChange = (value, viewUpdate) => {
+    if (!isMountedRef.current) return;
+
     updateCode(value, currLng);
 
     if (viewUpdate && viewUpdate.state) {
@@ -193,6 +249,7 @@ const Editor = ({ code }) => {
       // Clear any existing timer
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
       }
 
       // Clear ghost text when user types
@@ -218,6 +275,8 @@ const Editor = ({ code }) => {
           justAcceptedRef.current = false; // Reset the flag when user starts typing
 
           debounceTimerRef.current = setTimeout(() => {
+            if (!isMountedRef.current) return;
+
             const context = value.substring(0, cursor);
             if (context.trim().length > 2) {
               dispatch(
@@ -235,6 +294,8 @@ const Editor = ({ code }) => {
   };
 
   const handleEditorUpdate = (viewUpdate) => {
+    if (!isMountedRef.current) return;
+
     if (viewUpdate.selectionSet && !justAcceptedRef.current) {
       const newPos = viewUpdate.state.selection.main.head;
       const oldPos = cursorPositionRef.current;
@@ -252,33 +313,40 @@ const Editor = ({ code }) => {
     }
   };
 
+  // Search panel effect with proper cleanup
   useEffect(() => {
-    if (editorView) {
-      if (searchPanel) {
-        editorView.focus();
-        const fEvent = new KeyboardEvent("keydown", {
-          key: "f",
-          code: "KeyF",
-          ctrlKey: true,
-          bubbles: true,
-          cancelable: true,
-        });
-        editorView.contentDOM.dispatchEvent(fEvent);
-      }
+    if (editorView && searchPanel && isMountedRef.current) {
+      editorView.focus();
+      const fEvent = new KeyboardEvent("keydown", {
+        key: "f",
+        code: "KeyF",
+        ctrlKey: true,
+        bubbles: true,
+        cancelable: true,
+      });
+      editorView.contentDOM.dispatchEvent(fEvent);
     }
+
+    // No cleanup needed for this effect
   }, [searchPanel, editorView]);
 
   return (
     <div className="relative w-full h-full">
+      {/* Loading spinner instead of "Thinking..." */}
       {isGhostTextLoading && (
-        <div className="absolute top-2 right-2 z-10 text-xs text-gray-400">
-          Thinking...
+        <div className="absolute top-2 right-2 z-10 flex items-center gap-2 text-xs text-gray-400">
+          <CompletionLoader size="w-3 h-3" />
+          <span>Generating...</span>
         </div>
       )}
 
+      {/* Ghost text suggestion indicator */}
       {ghostTextSuggestion && !justAcceptedRef.current && (
-        <div className="absolute top-2 right-2 z-10 text-xs text-gray-400">
-          Press Tab to accept
+        <div className="absolute top-2 right-2 z-10 flex items-center gap-2 text-xs text-gray-400">
+          <kbd className="px-1.5 py-0.5 text-xs bg-gray-700 rounded border border-gray-600">
+            Tab
+          </kbd>
+          <span>to accept</span>
         </div>
       )}
 
