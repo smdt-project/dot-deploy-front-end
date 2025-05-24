@@ -13,6 +13,8 @@ import sidebarReducer from "../pages/editor/features/sidebar/sidebarSlice";
 import projectReducer from "../pages/editor/projectSlice";
 import profileReducer from "../pages/profile/profileSlice";
 import notifierReducer from "../ui/notifierSlice";
+import teamsReducer from "../pages/teams/teamsSlice";
+// import resetPasswordReducer from "../features/auth/resetPassword/resetPasswordSlice";
 import chatReducer from "../pages/editor/features/sidebar/chatSlice";
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -32,6 +34,8 @@ const store = configureStore({
     save: saveReducer,
     search: searchReducer,
     chat: chatReducer,
+    teams: teamsReducer,
+    // resetPassword: resetPasswordReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),
