@@ -21,6 +21,8 @@ import watchProfileSaga, {
 } from "../pages/profile/profileSaga";
 import { watchSearchSaga } from "../features/search/searchSaga";
 import watchSendMessageSaga from "../pages/editor/features/sidebar/chatSaga";
+import watchInviteMemberSaga from "../pages/teams/teamSaga";
+import { watchResetPasswordSaga } from "../features/auth/resetPassword/resetPasswordSaga";
 
 function* rootSaga() {
   yield all([
