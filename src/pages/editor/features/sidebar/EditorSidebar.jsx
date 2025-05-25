@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import EditorToolTip from "../../../../ui/EditorToolTip";
 import { handleSideMenu, handleTerminal, resetEditor } from "../../editorSlice";
 import { selectMenu } from "./sidebarSlice";
+import { IoChatbubbleOutline } from "react-icons/io5";
 
 const SidebarTab = ({ tab }) => {
   const selectedTab = useSelector((state) => state.sidebar.currTab);
@@ -129,6 +130,13 @@ const EditorSidebar = () => {
           isDisabled: isPublishing,
           isLink: true,
           link: "/",
+        },
+        {
+          icon: <IoChatbubbleOutline key={5} />,
+          name: "chat",
+          isDisabled: isPublishing || isCreating,
+          title: "Chat with AI",
+          isLink: false,
         },
         0,
         {
