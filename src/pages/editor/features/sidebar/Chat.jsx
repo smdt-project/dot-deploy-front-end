@@ -53,7 +53,7 @@ const Chat = () => {
         textAreaRef.current.focus();
         const textarea = textAreaRef.current;
         textarea.style.height = "auto";
-        textarea.style.height = `${Math.min(scrollHeight, 150)}px`;
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
       }
     } else if (initialInput === "") {
       console.log(
