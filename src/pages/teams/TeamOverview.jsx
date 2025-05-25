@@ -72,8 +72,8 @@ const TeamOverview = () => {
           We think you’re gonna like it here.
         </p>
         <p className="text-center text-sm sm:text-base text-gray-400 mt-2">
-          We’ve suggested some quick actions here in your team's overview to
-          help you get started.
+          We’ve suggested some quick actions here in your team&apos;s overview
+          to help you get started.
         </p>
       </div>
 
@@ -108,6 +108,7 @@ const TeamOverview = () => {
             Invite Members
           </span>
         </div>
+
         <div className="mt-4 p-4 flex flex-col items-center bg-gray-800 rounded-lg shadow-md w-full max-w-md">
           <p className="text-center text-lg sm:text-xl font-medium">
             Invite new members to join your team.

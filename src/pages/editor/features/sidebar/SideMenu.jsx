@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import Explore from "./Explore";
 import Settings from "./Setting";
 import SideSearch from "./SideSearch";
+import Chat from "./Chat";
 import Versions from "./Versions";
 
 const SideMenu = () => {
@@ -17,10 +18,12 @@ const SideMenu = () => {
         <Explore />
       ) : currTab === "search" ? (
         <SideSearch />
-      ) : currTab === "setting" ? (
-        <Settings />
+      ) : currTab === "version" ? (
+        <Versions />
+      ) : currTab === "chat" ? (
+        <Chat />
       ) : (
-        currTab === "version" && <Versions />
+        currTab === "setting" && <Settings />
       )}
     </div>
   );

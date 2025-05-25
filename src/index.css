@@ -7,149 +7,198 @@
 @tailwind utilities;
 
 :root {
-	--font-roboto: "Roboto", sans-serif;
-	--font-code: "Source Code Pro", monospace;
-	--font-grotesk: "Space Grotesk", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+  --font-code: "Source Code Pro", monospace;
+  --font-grotesk: "Space Grotesk", sans-serif;
 }
 
 * {
-	scroll-behavior: smooth;
-	margin: 0;
-	padding: 0;
+  scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-	@apply font-roboto bg-n-8 text-n-1 text-base overflow-x-hidden;
+  @apply font-roboto bg-n-8 text-n-1 text-base overflow-x-hidden;
 }
 
 .code-overflow::-webkit-scrollbar,
 body::-webkit-scrollbar {
-	@apply bg-slate-600 w-3;
+  @apply bg-slate-600 w-3;
 }
 .code-overflow::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-	@apply bg-slate-400 cursor-pointer;
+  @apply bg-slate-400 cursor-pointer;
 }
 
 .slide-scroll::-webkit-scrollbar,
 .code-area::-webkit-scrollbar {
-	@apply hidden;
+  @apply hidden;
 }
 
 .small-scroll::-webkit-scrollbar,
 body::-webkit-scrollbar {
-	@apply bg-slate-600 w-[6px] rounded-full;
+  @apply bg-slate-600 w-[6px] rounded-full;
 }
 .small-scroll::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-	@apply bg-slate-400 cursor-pointer rounded-full;
+  @apply bg-slate-400 cursor-pointer rounded-full;
 }
 
 .code-scroll {
-	overflow-y: scroll;
-	overflow-x: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .code-scroll::-webkit-scrollbar {
-	@apply bg-transparent w-[10px] rounded-sm;
+  @apply bg-transparent w-[10px] rounded-sm;
 }
 .code-scroll::-webkit-scrollbar-thumb {
-	@apply bg-[#b7b5b517] hover:bg-[#b7b5b56f] cursor-pointer rounded-sm transition-all duration-500;
+  @apply bg-[#b7b5b517] hover:bg-[#b7b5b56f] cursor-pointer rounded-sm transition-all duration-500;
 }
 
 /* override CodeMirror component's style */
 
 .cm-editor.cm-focused {
-	border: none !important;
-	outline: none !important;
+  border: none !important;
+  outline: none !important;
 }
 
 /* override split-span-react's resize handle style */
 
 .react-split__sash--horizontal {
-	height: 6px !important;
+  height: 6px !important;
 }
 
 .split-sash-content.split-sash-content-vscode.split-sash-content-active {
-	background-color: dimgrey !important;
+  background-color: dimgrey !important;
 }
 
 /* editors search panel */
 
 .cm-panels {
-	height: max-content !important;
-	border: none !important;
-	margin-right: 15px !important;
+  height: max-content !important;
+  border: none !important;
+  margin-right: 15px !important;
 }
 
 .cm-search {
-	@apply bg-n-14 text-slate-300 border-[1px] border-[#555] rounded-sm overflow-hidden shadow-lg shadow-zinc-800;
+  @apply bg-n-14 text-slate-300 border-[1px] border-[#555] rounded-sm overflow-hidden shadow-lg shadow-zinc-800;
 }
 
 .cm-search input {
-	background-color: #222222b5 !important;
-	color: #ffffffb7 !important;
-	font-size: 13px !important;
-	border: 1px solid #555 !important;
-	padding: 4px;
-	margin: 0 4px;
-	outline: none !important;
+  background-color: #222222b5 !important;
+  color: #ffffffb7 !important;
+  font-size: 13px !important;
+  border: 1px solid #555 !important;
+  padding: 4px;
+  margin: 0 4px;
+  outline: none !important;
 
-	transition: all 0.5 !important;
+  transition: all 0.5 !important;
 }
 .cm-search input:focus {
-	border-color: #8f8c8c !important;
-	color: #ffffff !important;
+  border-color: #8f8c8c !important;
+  color: #ffffff !important;
 }
 
 .cm-search button {
-	background: #222222b5 !important;
-	color: #ffffffb7 !important;
-	font-size: 13px !important;
-	border: 1px solid #555 !important;
-	outline: none !important;
-	border-radius: 5px !important;
-	padding: 2px 7px !important;
+  background: #222222b5 !important;
+  color: #ffffffb7 !important;
+  font-size: 13px !important;
+  border: 1px solid #555 !important;
+  outline: none !important;
+  border-radius: 5px !important;
+  padding: 2px 7px !important;
 
-	transition: all 0.5s !important;
+  transition: all 0.5s !important;
 }
 .cm-search button[name="close"] {
-	background: #542525b5 !important;
-	color: #ffffffb7 !important;
-	font-size: 20px !important;
-	margin-top: 5px !important;
-	padding: 0px 6px !important;
+  background: #542525b5 !important;
+  color: #ffffffb7 !important;
+  font-size: 20px !important;
+  margin-top: 5px !important;
+  padding: 0px 6px !important;
 }
 .cm-search button[name="close"]:hover {
-	background: #8a1c1cb5 !important;
-	color: #ffffffe1 !important;
-	border-color: #8a1c1cb5 !important;
+  background: #8a1c1cb5 !important;
+  color: #ffffffe1 !important;
+  border-color: #8a1c1cb5 !important;
 }
 .cm-search button:hover {
-	background: #555 !important;
-	color: #ffffffe1 !important;
+  background: #555 !important;
+  color: #ffffffe1 !important;
 }
 
 .cm-search label {
-	background-color: #55555562 !important;
-	padding: 5px;
-	border-radius: 5px;
-	color: #ffffffb7;
-	font-size: 15px !important;
+  background-color: #55555562 !important;
+  padding: 5px;
+  border-radius: 5px;
+  color: #ffffffb7;
+  font-size: 15px !important;
 }
 
 /* some animations  */
 
 .move-from-left {
-	animation-name: moveToLeft;
-	animation-duration: 0.4s;
-	animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  animation-name: moveToLeft;
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 @keyframes moveToLeft {
-	0% {
-		transform: translateX(-10rem);
-	}
-	100% {
-		transform: translateX(0);
-	}
+  0% {
+    transform: translateX(-10rem);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.cm-ghost-text {
+  color: "grey";
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+kbd {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo,
+    monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #e5e7eb;
+  background-color: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  padding: 0.125rem 0.375rem;
+}
+
+.loading-indicator {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -17,6 +17,9 @@ import teamsReducer from "../pages/teams/teamsSlice";
 import resetPasswordReducer from "../features/auth/resetPassword/resetPasswordSlice";
 import organizationsReducer from "../pages/profile/organizationsSlice";
 import approveInvitationReducer from "../pages/Invitation/approveInvitationSlice";
+import completionReducer from "../pages/editor/completionSlice";
+import chatReducer from "../pages/editor/features/sidebar/chatSlice";
+
 export const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
@@ -38,6 +41,8 @@ const store = configureStore({
     resetPassword: resetPasswordReducer,
     organizations: organizationsReducer,
     approveInvitation: approveInvitationReducer,
+    completion: completionReducer,
+    chat: chatReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),
