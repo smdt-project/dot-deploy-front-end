@@ -14,7 +14,6 @@ export const useCode = () => {
   const isSnippet = project.type === "snippet";
 
   const updateCode = (value, lng) => {
-    console.log("value: ", value, "lng: ", lng);
     if (isSnippet) {
       dispatch(updateSnippetCode(value));
       dispatch(updateSelectedLng({ code: value, lng: lng }));
