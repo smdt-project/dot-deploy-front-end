@@ -61,55 +61,9 @@ export const ghostTextField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-// Create high-precedence keymap that runs BEFORE CodeMirror's built-in Tab handler
+// Create high-precedence keymap for Escape only (Tab is handled in main component)
 export const ghostTextKeymap = Prec.highest(
   keymap.of([
-    {
-      key: "Tab",
-      preventDefault: true,
-      stopPropagation: true,
-      run: (view) => {
-        console.log("High precedence Tab handler running");
-
-        const decorations = view.state.field(ghostTextField);
-        let ghostText = null;
-
-        decorations.between(
-          0,
-          view.state.doc.length,
-          (from, to, decoration) => {
-            console.log("Checking decoration:", decoration);
-            if (decoration.spec.widget instanceof GhostTextWidget) {
-              ghostText = {
-                from,
-                text: decoration.spec.widget.text,
-              };
-              console.log("Found ghost text:", ghostText);
-              return false; // Stop iteration
-            }
-          },
-        );
-
-        if (!ghostText) {
-          console.log("No ghost text found, allowing default Tab");
-          return false; // Allow default tab behavior
-        }
-
-        console.log("Accepting ghost text:", ghostText.text);
-
-        // Calculate the end position after inserting the text
-        const endPosition = ghostText.from + ghostText.text.length;
-
-        // Accept the suggestion and move cursor to the end
-        view.dispatch({
-          changes: { from: ghostText.from, insert: ghostText.text },
-          selection: { anchor: endPosition, head: endPosition }, // Move cursor to end
-          effects: clearGhostText.of(null),
-        });
-
-        return true; // Prevent default tab behavior
-      },
-    },
     {
       key: "Escape",
       run: (view) => {
@@ -137,7 +91,7 @@ export const ghostTextKeymap = Prec.highest(
 export function ghostTextExtension() {
   return [
     ghostTextField,
-    ghostTextKeymap, // This now has highest precedence
+    ghostTextKeymap,
     EditorView.baseTheme({
       ".cm-ghost-text-widget": {
         color: "grey !important",
