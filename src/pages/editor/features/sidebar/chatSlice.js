@@ -34,9 +34,24 @@ const initialState = {
       icon: "TbBrandOpenai",
     },
     {
+      id: "Microsoft Phi 4 Reasoning",
+      name: "Microsoft Phi 4 Reasoning",
+      icon: "SiMicrosoft",
+    },
+    {
+      id: "Moonshot AI Moonlight 16B A3B Instruct",
+      name: "Moonshot AI Moonlight 16B A3B Instruct",
+      icon: "SiMoonshot",
+    },
+    {
       id: "Microsoft Phi 3 Medium 128K Instruct",
       name: "Microsoft Phi 3 Medium 128K Instruct",
       icon: "BsStars",
+    },
+    {
+      id: "Moonshot AI Kimi VL A3B Thinking",
+      name: "Moonshot AI Kimi VL A3B Thinking",
+      icon: "SiMoonshot",
     },
     {
       id: "Qwen 2.5 Coder 32B Instruct",

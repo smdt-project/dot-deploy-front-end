@@ -32,7 +32,6 @@ const authSlice = createSlice({
     },
     userDataSuccess: (state, action) => {
       state.isLoading = false;
-      console.log(action.payload, "action.payload");
       state.userData = action.payload;
       state.user = action.payload;
     },

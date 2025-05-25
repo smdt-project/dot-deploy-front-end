@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { IoSend, IoClose, IoCopy, IoStopCircle } from "react-icons/io5";
 import { TbBrandOpenai } from "react-icons/tb";
-import { SiGooglegemini, SiMeta } from "react-icons/si";
+import { SiGooglegemini, SiMeta, SiMicrosoft } from "react-icons/si";
 import { FaRobot, FaChevronDown } from "react-icons/fa";
 import { BsRobot, BsStars } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,6 +20,7 @@ const Chat = () => {
   const [copyNotification, setCopyNotification] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const textAreaRef = useRef(null);
   const { user } = useSelector((state) => state.auth);
   const { currLng, currCode } = useSelector((state) => state.project);
   const abortControllerRef = useRef(null);
@@ -53,6 +54,16 @@ const Chat = () => {
     inputRef.current?.focus();
   }, []);
 
+  // Auto-resize textarea based on content
+  useEffect(() => {
+    const textarea = textAreaRef.current;
+    if (textarea) {
+      textarea.style.height = "44px"; // Reset height to calculate scroll height
+      const scrollHeight = textarea.scrollHeight;
+      textarea.style.height = `${Math.min(scrollHeight, 150)}px`;
+    }
+  }, [input]);
+
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
@@ -69,6 +80,10 @@ const Chat = () => {
       })
     );
     setInput("");
+    // Reset textarea height
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "44px";
+    }
   };
 
   const handleStopGeneration = () => {
@@ -108,6 +123,8 @@ const Chat = () => {
         return <BsStars className="text-blue-400" />;
       case "TbBrandOpenai":
         return <TbBrandOpenai className="text-blue-400" />;
+      case "SiMicrosoft":
+        return <SiMicrosoft className="text-blue-400" />;
       default:
         return <FaRobot className="text-blue-400" />;
     }
@@ -141,9 +158,46 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-full text-slate-300 border-l border-slate-700 bg-[#1e1e1e]">
+    <div className="flex flex-col h-full text-slate-300 border-l border-slate-700 bg-[#1e1e1e] custom-scrollbar">
+      {/* Custom scrollbar styles */}
+      <style jsx global>{`
+        /* Custom scrollbar styling */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #1a1a1a;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #3a3a3a;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #4a4a4a;
+        }
+
+        /* Firefox scrollbar */
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #3a3a3a #1a1a1a;
+        }
+
+        /* Hide textarea scrollbar but keep functionality */
+        .input-textarea {
+          scrollbar-width: none;
+        }
+
+        .input-textarea::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+
       {/* Header with model selector */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700 bg-[#252526] sticky top-0 z-10">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700  sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <div className="text-sm font-medium text-white">AI Assistant</div>
           <div className="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full">
@@ -175,7 +229,7 @@ const Chat = () => {
             </button>
 
             {isModelDropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-56 bg-[#252526] border border-slate-700 rounded-md shadow-lg z-10 overflow-hidden">
+              <div className="absolute right-0 mt-1.5 w-56 bg-[#252526] border border-slate-700 rounded-md shadow-lg z-10 overflow-hidden custom-scrollbar">
                 <div className="py-1">
                   {models.map((model) => (
                     <button
@@ -202,7 +256,7 @@ const Chat = () => {
       </div>
 
       {/* Messages area */}
-      <div className="flex-grow overflow-y-auto p-4 space-y-6 bg-gradient-to-b from-[#1e1e1e] to-[#1a1a1a]">
+      <div className="flex-grow overflow-y-auto p-4 space-y-6 bg-gradient-to-b from-[#1e1e1e] to-[#1a1a1a] custom-scrollbar">
         {displayedMessages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <div className="bg-[#2d2d2d] p-5 rounded-full mb-4 border border-slate-700/50">
@@ -378,26 +432,32 @@ const Chat = () => {
 
       {/* Copy notification */}
       {copyNotification && (
-        <div className="fixed bottom-20 right-4 bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg animate-fade-in-out text-sm flex items-center gap-2">
+        <div className="fixed bottom-16 left-4 flex items-center gap-2 bg-blue-500/80 text-white px-3 py-2 rounded-md shadow-lg transition-opacity duration-300 z-20">
           <IoCopy size={14} />
           {copyNotification}
         </div>
       )}
 
-      {/* Input area */}
+      {/* Enhanced Input area */}
       <div className="p-4 border-t border-slate-700 bg-[#252526] sticky bottom-0">
-        <div className="relative">
+        <div className="relative flex items-end rounded-lg bg-[#1e1e1e] border border-slate-700 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500">
           <textarea
-            ref={inputRef}
+            ref={(el) => {
+              inputRef.current = el;
+              textAreaRef.current = el;
+            }}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Ask ${getModelName(
               selectedModel
             )} about your ${currLng} code...`}
-            className="w-full px-4 py-3 pr-12 bg-[#1e1e1e] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-slate-300 resize-none"
-            rows={1}
-            style={{ minHeight: "44px", maxHeight: "150px" }}
+            className="w-full px-4 py-3 pr-12 bg-transparent border-none focus:outline-none text-slate-300 resize-none input-textarea overflow-y-auto"
+            style={{
+              minHeight: "44px",
+              maxHeight: "150px",
+              lineHeight: "1.5",
+            }}
           />
           <button
             onClick={handleSendMessage}
