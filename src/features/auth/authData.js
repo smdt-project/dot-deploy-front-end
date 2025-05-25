@@ -2,7 +2,6 @@ import Cookies from "js-cookie";
 
 export const storeUserData = (user) => {
   const userData = user;
-  console.log({ user });
   const jwt = user.token;
   const expiration = Date.now() + 24 * 60 * 60 * 1000;
   const data = {
