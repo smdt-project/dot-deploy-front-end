@@ -15,6 +15,7 @@ import EditorToolTip from "../../../../ui/EditorToolTip";
 import { handleSideMenu, handleTerminal, resetEditor } from "../../editorSlice";
 import { selectMenu } from "./sidebarSlice";
 import { IoChatbubbleOutline } from "react-icons/io5";
+import { IoIosGitBranch } from "react-icons/io";
 
 const SidebarTab = ({ tab }) => {
   const selectedTab = useSelector((state) => state.sidebar.currTab);
@@ -103,6 +104,13 @@ const EditorSidebar = () => {
           isLink: false,
         },
         {
+          icon: <IoIosGitBranch key={3} />,
+          name: "version",
+          title: "Versions",
+          isDisabled: isCreating || isPublishing,
+          isLink: false,
+        },
+        {
           icon: <BiTerminal key={3} />,
           name: "terminal",
           title: "Terminal",
@@ -159,7 +167,7 @@ const EditorSidebar = () => {
           <SidebarTab tab={tab} index={index} key={index} />
         ) : (
           <Spacer key={index} />
-        )
+        ),
       )}
     </div>
   );
