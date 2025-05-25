@@ -77,7 +77,7 @@ const Chat = () => {
         code: currCode,
         question: input,
         signal: abortControllerRef.current.signal,
-      })
+      }),
     );
     setInput("");
     // Reset textarea height
@@ -158,7 +158,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-full text-slate-300 border-l border-slate-700 bg-[#1e1e1e] custom-scrollbar">
+    <div className="flex flex-col h-full text-slate-300 border-l border-slate-700  custom-scrollbar">
       {/* Custom scrollbar styles */}
       <style jsx global>{`
         /* Custom scrollbar styling */
@@ -314,7 +314,7 @@ const Chat = () => {
                             ...props
                           }) {
                             const match = /language-(\w+)/.exec(
-                              className || ""
+                              className || "",
                             );
                             if (!inline && match) {
                               return (
@@ -323,7 +323,7 @@ const Chat = () => {
                                     <button
                                       onClick={() =>
                                         copyToClipboard(
-                                          String(children).replace(/\n$/, "")
+                                          String(children).replace(/\n$/, ""),
                                         )
                                       }
                                       className="p-1.5 rounded bg-[#3a3a3a]/80 hover:bg-[#4a4a4a] transition-colors text-slate-300 hover:text-white"
@@ -450,7 +450,7 @@ const Chat = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Ask ${getModelName(
-              selectedModel
+              selectedModel,
             )} about your ${currLng} code...`}
             className="w-full px-4 py-3 pr-12 bg-transparent border-none focus:outline-none text-slate-300 resize-none input-textarea overflow-y-auto"
             style={{
