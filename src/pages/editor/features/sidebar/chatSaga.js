@@ -21,7 +21,7 @@ function* workSendMessage(action) {
   try {
     const response = yield call(
       axios.post,
-      `${import.meta.env.VITE_REACT_APP_API_URL}api/v1/projects/chat`,
+      `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/projects/chat`,
       {
         selectedModel: action.payload.selectedModel,
         language: action.payload.language,
