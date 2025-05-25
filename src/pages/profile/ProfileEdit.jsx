@@ -9,21 +9,13 @@ const inputClasses =
 const PasswordChange = () => {
   const dispatch = useDispatch();
   const { isLoading, passwordUpdateSuccess, error } = useSelector(
-    (state) => state.profile
+    (state) => state.profile,
   );
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [inputErr, setInputErr] = useState("");
-  const dispatch = useDispatch();
-  const { isLoading, passwordUpdateSuccess, error } = useSelector(
-    (state) => state.profile
-  );
-
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [confirmNewPass, setConfirmNewPass] = useState("");
-  const [inputErr, setInputErr] = useState("");
 
   const handleSubmit = () => {
     setInputErr("");
