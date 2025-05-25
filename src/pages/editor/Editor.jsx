@@ -118,16 +118,16 @@ const Editor = ({ code }) => {
   }, [currLng, editorView, dispatch, clearAllTimers]);
 
   const handleChatWithAI = (selectedText) => {
-    console.log("🚀 EDITOR: handleChatWithAI called!");
-    console.log("📝 EDITOR: Selected text:", selectedText);
-    console.log("🔧 EDITOR: Current currLng:", currLng);
+    //console.log("🚀 EDITOR: handleChatWithAI called!");
+    //console.log("📝 EDITOR: Selected text:", selectedText);
+    //console.log("🔧 EDITOR: Current currLng:", currLng);
 
     // Check if dispatch function exists
-    console.log("📦 EDITOR: Dispatch function:", typeof dispatch);
+    // console.log("📦 EDITOR: Dispatch function:", typeof dispatch);
 
     // Check if actions exist
-    console.log("⚡ EDITOR: setChatInputText action:", typeof setChatInputText);
-    console.log("⚡ EDITOR: setActiveTab action:", typeof setActiveTab);
+    // console.log("⚡ EDITOR: setChatInputText action:", typeof setChatInputText);
+    // console.log("⚡ EDITOR: setActiveTab action:", typeof setActiveTab);
 
     if (!selectedText || selectedText.trim() === "") {
       console.warn("⚠️ EDITOR: No text selected!");
@@ -136,15 +136,15 @@ const Editor = ({ code }) => {
 
     try {
       const prompt = `Explain this code snippet from my ${currLng} file:\n\`\`\`${currLng}\n${selectedText}\n\`\`\``;
-      console.log("📝 EDITOR: Generated prompt:", prompt);
+      // console.log("📝 EDITOR: Generated prompt:", prompt);
 
-      console.log("🔄 EDITOR: About to dispatch setChatInputText...");
+      // console.log("🔄 EDITOR: About to dispatch setChatInputText...");
       dispatch(setChatInputText(prompt));
-      console.log("✅ EDITOR: setChatInputText dispatched!");
+      // console.log("✅ EDITOR: setChatInputText dispatched!");
 
-      console.log("🔄 EDITOR: About to dispatch setActiveTab...");
+      // console.log("🔄 EDITOR: About to dispatch setActiveTab...");
       dispatch(setActiveTab({ tab: "chat", title: "AI Assistant" }));
-      console.log("✅ EDITOR: setActiveTab dispatched!");
+      // console.log("✅ EDITOR: setActiveTab dispatched!");
     } catch (error) {
       console.error("❌ EDITOR: Error in handleChatWithAI:", error);
     }
@@ -163,9 +163,9 @@ const Editor = ({ code }) => {
         const hasGhost = checkForGhostText(view);
 
         if (hasGhost) {
-          console.log(
-            "Tab intercepted - ghost text present, preventing default behavior",
-          );
+          // console.log(
+          //   "Tab intercepted - ghost text present, preventing default behavior",
+          // );
 
           e.preventDefault();
           e.stopPropagation();
@@ -189,7 +189,7 @@ const Editor = ({ code }) => {
           );
 
           if (ghostText) {
-            console.log("Accepting ghost text:", ghostText.text);
+            // console.log("Accepting ghost text:", ghostText.text);
 
             const endPosition = ghostText.from + ghostText.text.length;
 
@@ -226,12 +226,7 @@ const Editor = ({ code }) => {
           }
 
           return false;
-        } else {
-          console.log(
-            "Tab key pressed but no ghost text - allowing default behavior",
-          );
-          return true;
-        }
+        } else return true;
       }
     };
 
@@ -256,16 +251,16 @@ const Editor = ({ code }) => {
       !justAcceptedRef.current &&
       isMountedRef.current
     ) {
-      console.log("Received suggestion:", ghostTextSuggestion);
+      // console.log("Received suggestion:", ghostTextSuggestion);
 
       const cleanedSuggestion = ghostTextSuggestion.trim();
 
       if (cleanedSuggestion === lastSuggestionRef.current) {
-        console.log("Skipping duplicate suggestion");
+        // console.log("Skipping duplicate suggestion");
         return;
       }
 
-      console.log("Using suggestion:", cleanedSuggestion);
+      // console.log("Using suggestion:", cleanedSuggestion);
 
       if (cleanedSuggestion.length > 0) {
         const cursor = cursorPositionRef.current;
@@ -330,7 +325,7 @@ const Editor = ({ code }) => {
         );
 
         if (isUserTyping) {
-          console.log("User is typing, will request new suggestion");
+          // console.log("User is typing, will request new suggestion");
           justAcceptedRef.current = false;
 
           debounceTimerRef.current = setTimeout(() => {
