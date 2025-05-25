@@ -14,6 +14,9 @@ import {
   GhostTextWidget,
 } from "./ghostTextExtension";
 import CompletionLoader from "../../ui/CompletionLoader";
+import { inlineChatExtension } from "./inlineChatExtension";
+import { setInputText as setChatInputText } from "./features/sidebar/chatSlice";
+import { setActiveTab } from "./features/sidebar/sidebarSlice";
 
 const Editor = ({ code }) => {
   const { codeFontSize, codeTabSize, closeBrackets, lineNo, foldGut, holder } =
@@ -23,13 +26,15 @@ const Editor = ({ code }) => {
   const { ghostTextSuggestion, isGhostTextLoading } = useSelector(
     (state) => state.completion,
   );
+  const selectedModelForCompletion = useSelector(
+    (state) => state.chat.selectedModel,
+  );
 
   const dispatch = useDispatch();
   const tabSize = Array.from({ length: codeTabSize }, () => " ").join("");
   const [editorView, setEditorView] = useState(null);
   const updateCode = useCode();
 
-  // Refs for cleanup
   const debounceTimerRef = useRef(null);
   const acceptanceTimerRef = useRef(null);
   const justAcceptedTimerRef = useRef(null);
@@ -38,20 +43,19 @@ const Editor = ({ code }) => {
   const currentLanguageRef = useRef(currLng);
   const justAcceptedRef = useRef(false);
   const isMountedRef = useRef(true);
-  const hasGhostTextRef = useRef(false); // Track if ghost text is currently visible
+  const hasGhostTextRef = useRef(false);
 
   const [acceptedSuggestion, setAcceptedSuggestion] = useState(false);
 
   const mode = getLngInfo(currLng).mode;
 
-  // Helper function to check if ghost text exists
   const checkForGhostText = useCallback((view) => {
     if (!view) return false;
 
     const decorations = view.state.field(ghostTextField);
     let hasGhost = false;
 
-    decorations.between(0, view.state.doc.length, (from, to, decoration) => {
+    decorations.between(0, view.state.doc.length, (_from, _to, decoration) => {
       if (decoration.spec.widget instanceof GhostTextWidget) {
         hasGhost = true;
         return false;
@@ -62,7 +66,6 @@ const Editor = ({ code }) => {
     return hasGhost;
   }, []);
 
-  // Cleanup function for all timers
   const clearAllTimers = useCallback(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
@@ -78,7 +81,6 @@ const Editor = ({ code }) => {
     }
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
     isMountedRef.current = true;
 
@@ -87,19 +89,16 @@ const Editor = ({ code }) => {
       clearAllTimers();
       hasGhostTextRef.current = false;
 
-      // Cleanup editor event listeners
       if (editorView && editorView._ghostTextCleanup) {
         editorView._ghostTextCleanup();
       }
     };
   }, [clearAllTimers, editorView]);
 
-  // Language change effect with proper cleanup
   useEffect(() => {
     if (currentLanguageRef.current !== currLng) {
       currentLanguageRef.current = currLng;
 
-      // Clear all timers when language changes
       clearAllTimers();
 
       dispatch(clearGhostText());
@@ -109,17 +108,32 @@ const Editor = ({ code }) => {
         });
       }
 
-      // Reset all state
       setAcceptedSuggestion(false);
       lastSuggestionRef.current = null;
       justAcceptedRef.current = false;
       hasGhostTextRef.current = false;
     }
 
-    return () => {
-      // Any specific cleanup for language change can go here
-    };
+    return () => {};
   }, [currLng, editorView, dispatch, clearAllTimers]);
+
+  const handleChatWithAI = (selectedText) => {
+    console.log("EDITOR: handleChatWithAI called.");
+    console.log("EDITOR: Current project currLng from selector:", currLng);
+    console.log("EDITOR: Selected text:", selectedText);
+
+    if (!selectedText || selectedText.trim() === "") {
+      console.warn("EDITOR: No text selected or empty selection.");
+      return;
+    }
+
+    const prompt = `Explain this code snippet from my ${currLng} file:\n\`\`\`${currLng}\n${selectedText}\n\`\`\``;
+    console.log("EDITOR: Dispatching setChatInputText with prompt:", prompt);
+    dispatch(setChatInputText(prompt));
+
+    console.log("EDITOR: Dispatching setActiveTab to 'chat'");
+    dispatch(setActiveTab({ tab: "chat", title: "AI Assistant" }));
+  };
 
   const handleEditorCreate = (view) => {
     if (!isMountedRef.current) return;
@@ -127,13 +141,10 @@ const Editor = ({ code }) => {
     setEditorView(view);
     cursorPositionRef.current = view.state.selection.main.head;
 
-    // Create a high-priority keydown handler that ONLY handles Tab when ghost text is present
     const handleKeyDown = (e) => {
       if (!isMountedRef.current) return;
 
-      // ONLY handle Tab key and ONLY when ghost text is present
       if (e.key === "Tab") {
-        // Check if ghost text exists
         const hasGhost = checkForGhostText(view);
 
         if (hasGhost) {
@@ -141,19 +152,17 @@ const Editor = ({ code }) => {
             "Tab intercepted - ghost text present, preventing default behavior",
           );
 
-          // IMMEDIATELY prevent all default behavior and propagation
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
 
-          // Get the ghost text
           const decorations = view.state.field(ghostTextField);
           let ghostText = null;
 
           decorations.between(
             0,
             view.state.doc.length,
-            (from, to, decoration) => {
+            (from, _to, decoration) => {
               if (decoration.spec.widget instanceof GhostTextWidget) {
                 ghostText = {
                   from,
@@ -167,34 +176,27 @@ const Editor = ({ code }) => {
           if (ghostText) {
             console.log("Accepting ghost text:", ghostText.text);
 
-            // Calculate the end position
             const endPosition = ghostText.from + ghostText.text.length;
 
-            // Accept the suggestion and move cursor to end
             view.dispatch({
               changes: { from: ghostText.from, insert: ghostText.text },
               selection: { anchor: endPosition, head: endPosition },
               effects: clearGhostTextEffect.of(null),
             });
 
-            // Update Redux state
             const newValue = view.state.doc.toString();
             updateCode(newValue, currLng);
             dispatch(clearGhostText());
 
-            // Track the accepted suggestion and prevent immediate re-suggestion
             lastSuggestionRef.current = ghostText.text;
             setAcceptedSuggestion(true);
             justAcceptedRef.current = true;
             hasGhostTextRef.current = false;
 
-            // Update cursor position ref
             cursorPositionRef.current = endPosition;
 
-            // Clear existing timers before setting new ones
             clearAllTimers();
 
-            // Reset the flags after a delay
             acceptanceTimerRef.current = setTimeout(() => {
               if (isMountedRef.current) {
                 setAcceptedSuggestion(false);
@@ -208,9 +210,8 @@ const Editor = ({ code }) => {
             }, 1000);
           }
 
-          return false; // Prevent any further processing
+          return false;
         } else {
-          // No ghost text, let the event proceed normally (for tab navigation, etc.)
           console.log(
             "Tab key pressed but no ghost text - allowing default behavior",
           );
@@ -219,22 +220,18 @@ const Editor = ({ code }) => {
       }
     };
 
-    // Add event listeners with capture to intercept early
     const editorContainer = view.dom;
     const contentContainer = view.contentDOM;
 
-    // Use capture phase to intercept before any other handlers
     editorContainer.addEventListener("keydown", handleKeyDown, true);
     contentContainer.addEventListener("keydown", handleKeyDown, true);
 
-    // Store the cleanup function
     view._ghostTextCleanup = () => {
       editorContainer.removeEventListener("keydown", handleKeyDown, true);
       contentContainer.removeEventListener("keydown", handleKeyDown, true);
     };
   };
 
-  // Ghost text suggestion effect with proper cleanup
   useEffect(() => {
     if (
       editorView &&
@@ -273,7 +270,6 @@ const Editor = ({ code }) => {
     }
   }, [ghostTextSuggestion, isGhostTextLoading, editorView, acceptedSuggestion]);
 
-  // Update ghost text ref when suggestion changes
   useEffect(() => {
     if (
       !ghostTextSuggestion ||
@@ -297,13 +293,11 @@ const Editor = ({ code }) => {
     if (viewUpdate && viewUpdate.docChanged) {
       const cursor = cursorPositionRef.current;
 
-      // Clear any existing timer
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
         debounceTimerRef.current = null;
       }
 
-      // Clear ghost text when user types
       dispatch(clearGhostText());
       if (editorView) {
         editorView.dispatch({
@@ -312,9 +306,7 @@ const Editor = ({ code }) => {
       }
       hasGhostTextRef.current = false;
 
-      // Only request new suggestions if we haven't just accepted one and user is actually typing
       if (!acceptedSuggestion && !justAcceptedRef.current) {
-        // Check if this is a user-initiated change (not just cursor movement)
         const isUserTyping = viewUpdate.transactions.some(
           (tr) =>
             tr.isUserEvent("input.type") ||
@@ -324,7 +316,7 @@ const Editor = ({ code }) => {
 
         if (isUserTyping) {
           console.log("User is typing, will request new suggestion");
-          justAcceptedRef.current = false; // Reset the flag when user starts typing
+          justAcceptedRef.current = false;
 
           debounceTimerRef.current = setTimeout(() => {
             if (!isMountedRef.current) return;
@@ -335,7 +327,8 @@ const Editor = ({ code }) => {
                 fetchGhostTextRequest({
                   language: currLng,
                   context: context,
-                  selectedModel: "Gemini 2.0 Flash",
+                  selectedModel:
+                    selectedModelForCompletion || "Gemini 2.0 Flash",
                 }),
               );
             }
@@ -353,7 +346,6 @@ const Editor = ({ code }) => {
       const oldPos = cursorPositionRef.current;
       cursorPositionRef.current = newPos;
 
-      // Clear ghost text on significant cursor movement (but not right after acceptance)
       if (Math.abs(newPos - oldPos) > 1) {
         dispatch(clearGhostText());
         if (editorView) {
@@ -365,13 +357,11 @@ const Editor = ({ code }) => {
       }
     }
 
-    // Update ghost text reference
     if (editorView) {
       checkForGhostText(editorView);
     }
   };
 
-  // Search panel effect with proper cleanup
   useEffect(() => {
     if (editorView && searchPanel && isMountedRef.current) {
       editorView.focus();
@@ -396,7 +386,6 @@ const Editor = ({ code }) => {
         </div>
       )}
 
-      {/* Ghost text suggestion indicator - only show when we actually have visible ghost text */}
       {ghostTextSuggestion &&
         !isGhostTextLoading &&
         !justAcceptedRef.current &&
@@ -410,6 +399,7 @@ const Editor = ({ code }) => {
         )}
 
       <CodeMirror
+        key={currLng}
         value={code}
         theme={oneDark}
         extensions={[
@@ -418,6 +408,7 @@ const Editor = ({ code }) => {
           indentUnit.of(tabSize),
           keymap.of(searchKeymap),
           ghostTextExtension(),
+          inlineChatExtension(handleChatWithAI),
         ]}
         placeholder={holder}
         basicSetup={{
