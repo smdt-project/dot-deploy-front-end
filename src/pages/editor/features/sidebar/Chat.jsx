@@ -1,19 +1,30 @@
 import { useState, useRef, useEffect } from "react";
 import { IoSend, IoClose, IoCopy, IoStopCircle } from "react-icons/io5";
 import { TbBrandOpenai } from "react-icons/tb";
-import { SiGooglegemini, SiMeta, SiMicrosoft } from "react-icons/si";
+import { SiGooglegemini, SiMeta } from "react-icons/si";
 import { FaRobot, FaChevronDown } from "react-icons/fa";
 import { BsRobot, BsStars } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { clearChat, sendMessageRequest, setSelectedModel } from "./chatSlice";
+import {
+  clearChat,
+  clearInitialInput,
+  sendMessageRequest,
+  setSelectedModel,
+} from "./chatSlice";
 
 const Chat = () => {
   const dispatch = useDispatch();
-  const { messages, isLoading, selectedModel, models, isStreaming } =
-    useSelector((state) => state.chat);
+  const {
+    messages,
+    isLoading,
+    selectedModel,
+    models,
+    isStreaming,
+    initialInput,
+  } = useSelector((state) => state.chat);
   const [input, setInput] = useState("");
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [displayedMessages, setDisplayedMessages] = useState([]);
@@ -25,7 +36,32 @@ const Chat = () => {
   const { currLng, currCode } = useSelector((state) => state.project);
   const abortControllerRef = useRef(null);
 
-  // Effect to handle messages display (without typing animation)
+  useEffect(() => {
+    console.log(
+      "CHAT COMPONENT: initialInput effect. Current initialInput from props/state:",
+      initialInput,
+    );
+    if (initialInput && initialInput.trim() !== "") {
+      console.log(
+        "CHAT COMPONENT: initialInput is present, setting local input:",
+        initialInput,
+      );
+      setInput(initialInput);
+      dispatch(clearInitialInput());
+      if (textAreaRef.current) {
+        console.log("CHAT COMPONENT: Focusing textarea and resizing.");
+        textAreaRef.current.focus();
+        const textarea = textAreaRef.current;
+        textarea.style.height = "auto";
+        textarea.style.height = `${Math.min(scrollHeight, 150)}px`;
+      }
+    } else if (initialInput === "") {
+      console.log(
+        "CHAT COMPONENT: initialInput effect. initialInput is empty, doing nothing with local input.",
+      );
+    }
+  }, [initialInput, dispatch]);
+
   useEffect(() => {
     if (messages.length === 0) {
       setDisplayedMessages([]);
@@ -123,8 +159,8 @@ const Chat = () => {
         return <BsStars className="text-blue-400" />;
       case "TbBrandOpenai":
         return <TbBrandOpenai className="text-blue-400" />;
-      case "SiMicrosoft":
-        return <SiMicrosoft className="text-blue-400" />;
+      //case "SiMicrosoft":
+      //  return <SiMicrosoft className="text-blue-400" />;
       default:
         return <FaRobot className="text-blue-400" />;
     }
