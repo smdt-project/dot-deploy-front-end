@@ -96,8 +96,8 @@ function* workFetchGhostText(action) {
       const rawSuggestion = response.data.data;
       const cleanedSuggestion = cleanMarkdownSuggestion(rawSuggestion);
 
-      console.log("Raw suggestion:", rawSuggestion);
-      console.log("Cleaned suggestion:", cleanedSuggestion);
+      //console.log("Raw suggestion:", rawSuggestion);
+      //console.log("Cleaned suggestion:", cleanedSuggestion);
 
       yield put(fetchGhostTextSuccess({ suggestion: cleanedSuggestion }));
     } else if (response.data && response.data.data === "") {
