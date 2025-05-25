@@ -118,21 +118,36 @@ const Editor = ({ code }) => {
   }, [currLng, editorView, dispatch, clearAllTimers]);
 
   const handleChatWithAI = (selectedText) => {
-    console.log("EDITOR: handleChatWithAI called.");
-    console.log("EDITOR: Current project currLng from selector:", currLng);
-    console.log("EDITOR: Selected text:", selectedText);
+    console.log("🚀 EDITOR: handleChatWithAI called!");
+    console.log("📝 EDITOR: Selected text:", selectedText);
+    console.log("🔧 EDITOR: Current currLng:", currLng);
+
+    // Check if dispatch function exists
+    console.log("📦 EDITOR: Dispatch function:", typeof dispatch);
+
+    // Check if actions exist
+    console.log("⚡ EDITOR: setChatInputText action:", typeof setChatInputText);
+    console.log("⚡ EDITOR: setActiveTab action:", typeof setActiveTab);
 
     if (!selectedText || selectedText.trim() === "") {
-      console.warn("EDITOR: No text selected or empty selection.");
+      console.warn("⚠️ EDITOR: No text selected!");
       return;
     }
 
-    const prompt = `Explain this code snippet from my ${currLng} file:\n\`\`\`${currLng}\n${selectedText}\n\`\`\``;
-    console.log("EDITOR: Dispatching setChatInputText with prompt:", prompt);
-    dispatch(setChatInputText(prompt));
+    try {
+      const prompt = `Explain this code snippet from my ${currLng} file:\n\`\`\`${currLng}\n${selectedText}\n\`\`\``;
+      console.log("📝 EDITOR: Generated prompt:", prompt);
 
-    console.log("EDITOR: Dispatching setActiveTab to 'chat'");
-    dispatch(setActiveTab({ tab: "chat", title: "AI Assistant" }));
+      console.log("🔄 EDITOR: About to dispatch setChatInputText...");
+      dispatch(setChatInputText(prompt));
+      console.log("✅ EDITOR: setChatInputText dispatched!");
+
+      console.log("🔄 EDITOR: About to dispatch setActiveTab...");
+      dispatch(setActiveTab({ tab: "chat", title: "AI Assistant" }));
+      console.log("✅ EDITOR: setActiveTab dispatched!");
+    } catch (error) {
+      console.error("❌ EDITOR: Error in handleChatWithAI:", error);
+    }
   };
 
   const handleEditorCreate = (view) => {
