@@ -105,8 +105,9 @@ const CodeBoxHeader = ({ lngName }) => {
 };
 
 const EditorCodeBox = () => {
-  const { project, currLng, latestCode, currCode, selectedVersion } =
-    useSelector((state) => state.project);
+  const { project, currLng, latestCode, selectedVersion } = useSelector(
+    (state) => state.project,
+  );
   const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
     useSelector((state) => state.editor);
   const { autoSave, notifyInterval } = useSelector((state) => state.setting);
@@ -133,18 +134,17 @@ const EditorCodeBox = () => {
         : latestCode.js;
   }
 
-  const lng = currLng;
   const code =
     project.type === "snippet" ? latestCode.code : latestCode[currLng];
 
   const selectedMode =
-    lng === "react"
+    currLng === "react"
       ? javascript({ jsx: true })
-      : lng === "html"
-      ? html()
-      : lng === "css"
-      ? css()
-      : javascript();
+      : currLng === "html"
+        ? html()
+        : currLng === "css"
+          ? css()
+          : javascript();
 
   const [sizes, setSizes] = useState(showTerminal ? [70, 30] : [100, 0]);
   const [horizSizes, setHorizSizes] = useState([15, 85]);
@@ -175,8 +175,8 @@ const EditorCodeBox = () => {
               JSON.stringify({
                 type: "info",
                 info: `Changes are auto saved - ${date.toISOString()}`,
-              })
-            )
+              }),
+            ),
           );
         }
       }
@@ -206,7 +206,7 @@ const EditorCodeBox = () => {
           >
             <SideMenu />
             <Pane minSize={"20%"}>
-              <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
+              <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
               <SplitPane
                 split={splitDxr}
                 sizes={sizes}
@@ -217,7 +217,7 @@ const EditorCodeBox = () => {
                 }}
               >
                 <Pane>
-                  <Editor code={code} mode={selectedMode} />
+                  <Editor key={currLng} code={code} mode={selectedMode} />
                 </Pane>
 
                 <Pane minSize={"10%"}>
@@ -231,7 +231,7 @@ const EditorCodeBox = () => {
           </SplitPane>
         ) : (
           <>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
             <SplitPane
               split={splitDxr}
               sizes={sizes}
@@ -239,7 +239,7 @@ const EditorCodeBox = () => {
               style={{ height: "95%", minWidth: "20%" }}
             >
               <Pane>
-                <Editor code={code} mode={selectedMode} />
+                <Editor key={currLng} code={code} mode={selectedMode} />
               </Pane>
               <Pane minSize={"10%"}>
                 <ResultTerminal
@@ -259,9 +259,9 @@ const EditorCodeBox = () => {
         >
           <SideMenu />
           <Pane minSize={"20%"}>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
             <div className="h-[95%]">
-              <Editor code={code} mode={selectedMode} />
+              <Editor key={currLng} code={code} mode={selectedMode} />
             </div>
           </Pane>
         </SplitPane>
@@ -269,7 +269,7 @@ const EditorCodeBox = () => {
         <>
           <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
           <div className=" h-[95%]">
-            <Editor code={code} mode={selectedMode} />
+            <Editor key={currLng} code={code} mode={selectedMode} />
           </div>
         </>
       )}
