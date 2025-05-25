@@ -4,6 +4,7 @@ const initialState = {
   messages: [],
   isLoading: false,
   error: null,
+  initialInput: "",
   selectedModel: "Gemini 2.0 Flash",
   models: [
     {
@@ -97,6 +98,17 @@ const chatSlice = createSlice({
     addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
+    setInputText: (state, action) => {
+      console.log(
+        "CHAT SLICE: setInputText reducer called. Payload:",
+        action.payload,
+      );
+      state.initialInput = action.payload;
+    },
+    clearInitialInput: (state) => {
+      console.log("CHAT SLICE: clearInitialInput reducer called.");
+      state.initialInput = "";
+    },
   },
 });
 
@@ -107,6 +119,8 @@ export const {
   setSelectedModel,
   clearChat,
   addMessage,
+  setInputText,
+  clearInitialInput,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
