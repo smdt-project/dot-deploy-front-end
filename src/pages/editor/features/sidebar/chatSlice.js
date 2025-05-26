@@ -109,6 +109,39 @@ const chatSlice = createSlice({
       console.log("CHAT SLICE: clearInitialInput reducer called.");
       state.initialInput = "";
     },
+    bugDetectionRequest: (state, action) => {
+      state.isLoading = true;
+      state.error = null;
+      // Add a "analyzing" message immediately
+      state.messages.push({
+        role: "user",
+        content: "🐛 Analyzing code for bugs...",
+        timestamp: new Date().toISOString(),
+        type: "bug-detection",
+      });
+    },
+    bugDetectionSuccess: (state, action) => {
+      state.isLoading = false;
+      state.messages.push({
+        role: "assistant",
+        content: action.payload.data,
+        timestamp: new Date().toISOString(),
+        model: "Bug Detection AI",
+        type: "bug-detection",
+      });
+    },
+    bugDetectionFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+      // Replace the analyzing message with error
+      state.messages[state.messages.length - 1] = {
+        role: "assistant",
+        content: `❌ Bug detection failed: ${action.payload}`,
+        timestamp: new Date().toISOString(),
+        model: "Bug Detection AI",
+        type: "bug-detection",
+      };
+    },
   },
 });
 
@@ -121,6 +154,9 @@ export const {
   addMessage,
   setInputText,
   clearInitialInput,
+  bugDetectionFailure,
+  bugDetectionRequest,
+  bugDetectionSuccess,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
