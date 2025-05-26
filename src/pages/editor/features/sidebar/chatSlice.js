@@ -12,8 +12,11 @@ const initialState = {
       name: "Gemini 2.0 Flash",
       icon: "SiGooglegemini",
     },
-
-    { id: "DeepSeek-R1", name: "DeepSeek-R1", icon: "BsRobot" },
+    {
+      id: "DeepSeek: DeepSeek V3 0324",
+      name: "DeepSeek: DeepSeek V3 0324",
+      icon: "BsRobot",
+    },
     {
       id: "OpenGVLab: InternVL3 14B",
       name: "OpenGVLab: InternVL3 14B",
@@ -25,8 +28,8 @@ const initialState = {
       icon: "FaRobot",
     },
     {
-      id: "Meta Llama 3 8B Instruct",
-      name: "Meta Llama 3 8B Instruct",
+      id: "Meta: Llama 3.1 8B Instruct",
+      name: "Meta: Llama 3.1 8B Instruct",
       icon: "SiMeta",
     },
     {
@@ -45,8 +48,8 @@ const initialState = {
       icon: "SiMoonshot",
     },
     {
-      id: "Microsoft Phi 3 Medium 128K Instruct",
-      name: "Microsoft Phi 3 Medium 128K Instruct",
+      id: "Microsoft: MAI DS R1",
+      name: "Microsoft: MAI DS R1",
       icon: "BsStars",
     },
     {
@@ -101,7 +104,7 @@ const chatSlice = createSlice({
     setInputText: (state, action) => {
       console.log(
         "CHAT SLICE: setInputText reducer called. Payload:",
-        action.payload,
+        action.payload
       );
       state.initialInput = action.payload;
     },
