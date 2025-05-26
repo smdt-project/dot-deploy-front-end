@@ -115,7 +115,7 @@ const chatSlice = createSlice({
       // Add a "analyzing" message immediately
       state.messages.push({
         role: "user",
-        content: "🐛 Analyzing code for bugs...",
+        content: "Detect my code for bugs...",
         timestamp: new Date().toISOString(),
         type: "bug-detection",
       });
