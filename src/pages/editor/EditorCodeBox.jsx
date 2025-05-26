@@ -18,10 +18,14 @@ import ResultTerminal from "./ResultTernimal";
 import { updateLogs, updateSplit } from "./editorSlice";
 import SideMenu from "./features/sidebar/SideMenu";
 import { updateProjectRequest } from "./projectSlice";
+import { bugDetectionRequest } from "./features/sidebar/chatSlice";
+import { setActiveTab } from "./features/sidebar/sidebarSlice";
+import { IoBug } from "react-icons/io5";
 
 const CodeBoxHeader = ({ lngName }) => {
   const { showTerminal, splitDxr } = useSelector((state) => state.editor);
-  const { project, currLng } = useSelector((state) => state.project);
+  const { project, currLng, currCode } = useSelector((state) => state.project);
+  const { selectedModel } = useSelector((state) => state.chat);
 
   const isSnippet = project.type === "snippet";
 
@@ -31,6 +35,18 @@ const CodeBoxHeader = ({ lngName }) => {
   const handleSelection = useUiUpdate();
 
   const handleSplit = (dxr) => dispatch(updateSplit(dxr));
+
+  const handleDetectBug = () => {
+    dispatch(
+      bugDetectionRequest({
+        selectedModel,
+        language: currLng,
+        code: currCode,
+      }),
+    );
+
+    dispatch(setActiveTab({ tab: "chat", title: "AI Assistant" }));
+  };
 
   return (
     <div className="flex items-center justify-between h-9 mb-1 shadow-md border-[1px] border-[#3d3d3d82]">
@@ -53,22 +69,25 @@ const CodeBoxHeader = ({ lngName }) => {
         )}
       </div>
       <div className="flex items-center gap-2">
-        <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md flex items-center justify-center gap-2 transition-all duration-200">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 9v1a3 3 0 003 3h0a3 3 0 003-3V9m-6 0h6m-6 0a3 3 0 00-3 3v0a3 3 0 003 3h6a3 3 0 003-3v0a3 3 0 00-3-3m-6 0V5a3 3 0 013-3h0a3 3 0 013 3v4"
+        <button
+          onClick={handleDetectBug}
+          className={`
+    group relative overflow-hidden
+    bg-slate-700 hover:bg-slate-600
+    text-white font-medium text-sm
+    px-6 py-2 rounded-xl
+    cursor-pointer
+  `}
+        >
+          <div className="relative flex items-center justify-center gap-2.5">
+            <IoBug
+              className={`
+        w-5 h-5 
+        text-red-500
+      `}
             />
-          </svg>
-          Detect Bug
+            <span className="font-semibold tracking-wide">Detect Bugs</span>
+          </div>
         </button>
 
         {showTerminal && (
@@ -126,7 +145,7 @@ const CodeBoxHeader = ({ lngName }) => {
 
 const EditorCodeBox = () => {
   const { project, currLng, latestCode, selectedVersion } = useSelector(
-    (state) => state.project
+    (state) => state.project,
   );
   const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
     useSelector((state) => state.editor);
@@ -161,10 +180,10 @@ const EditorCodeBox = () => {
     currLng === "react"
       ? javascript({ jsx: true })
       : currLng === "html"
-      ? html()
-      : currLng === "css"
-      ? css()
-      : javascript();
+        ? html()
+        : currLng === "css"
+          ? css()
+          : javascript();
 
   const [sizes, setSizes] = useState(showTerminal ? [70, 30] : [100, 0]);
   const [horizSizes, setHorizSizes] = useState([15, 85]);
@@ -195,8 +214,8 @@ const EditorCodeBox = () => {
               JSON.stringify({
                 type: "info",
                 info: `Changes are auto saved - ${date.toISOString()}`,
-              })
-            )
+              }),
+            ),
           );
         }
       }
