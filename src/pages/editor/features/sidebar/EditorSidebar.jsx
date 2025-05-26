@@ -9,12 +9,13 @@ import {
   TbSettings,
   TbWorld,
 } from "react-icons/tb";
-import { IoIosGitBranch } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import EditorToolTip from "../../../../ui/EditorToolTip";
 import { handleSideMenu, handleTerminal, resetEditor } from "../../editorSlice";
 import { selectMenu } from "./sidebarSlice";
+import { IoChatbubbleOutline } from "react-icons/io5";
+import { IoIosGitBranch } from "react-icons/io";
 
 const SidebarTab = ({ tab }) => {
   const selectedTab = useSelector((state) => state.sidebar.currTab);
@@ -83,6 +84,8 @@ const Spacer = () => {
 const EditorSidebar = () => {
   const { isCreating, isPublishing } = useSelector((state) => state.editor);
   const { user, isUserSignedIn } = useSelector((state) => state.auth);
+  const { project } = useSelector((state) => state.project);
+
   return (
     <div className="h-full w-10 flex flex-col items-center bg-[#353b47] text-2xl sm:pb-2 border-r-[1px] border-slate-500">
       {[
@@ -115,7 +118,6 @@ const EditorSidebar = () => {
           isLink: true,
           isBtn: true,
         },
-
         {
           icon: <TbSettings key={3} />,
           name: "setting",
@@ -136,6 +138,13 @@ const EditorSidebar = () => {
           isDisabled: isPublishing,
           isLink: true,
           link: "/",
+        },
+        {
+          icon: <IoChatbubbleOutline key={5} />,
+          name: "chat",
+          isDisabled: isPublishing || isCreating,
+          title: "Chat with AI",
+          isLink: false,
         },
         0,
         {
@@ -158,7 +167,7 @@ const EditorSidebar = () => {
           <SidebarTab tab={tab} index={index} key={index} />
         ) : (
           <Spacer key={index} />
-        )
+        ),
       )}
     </div>
   );

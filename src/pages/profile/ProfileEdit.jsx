@@ -9,18 +9,29 @@ const inputClasses =
 const PasswordChange = () => {
   const dispatch = useDispatch();
   const { isLoading, passwordUpdateSuccess, error } = useSelector(
-    (state) => state.profile
+    (state) => state.profile,
   );
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [inputErr, setInputErr] = useState("");
+  const [confirmNewPass, setConfirmNewPass] = useState("");
 
   const handleSubmit = () => {
     setInputErr("");
 
+    if (!oldPassword || !newPassword || !confirmNewPass) {
+      setInputErr("All fields are required.");
+      return;
+    }
+
     if (newPassword.length < 6) {
       setInputErr("Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (newPassword !== confirmNewPass) {
+      setInputErr("New passwords do not match.");
       return;
     }
 
@@ -63,6 +74,17 @@ const PasswordChange = () => {
               placeholder="New Password"
               value={newPassword}
               onChange={(event) => setNewPassword(event.target.value)}
+              required
+            />
+          </div>
+          <div className="flex items-center gap-2 justify-between">
+            <span className="text-slate-400">Confirm new password:</span>
+            <input
+              type="password"
+              className={inputClasses}
+              placeholder="Confirm new password"
+              value={confirmNewPass}
+              onChange={(event) => setConfirmNewPass(event.target.value)}
               required
             />
           </div>

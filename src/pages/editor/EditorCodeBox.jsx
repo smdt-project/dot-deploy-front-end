@@ -52,61 +52,82 @@ const CodeBoxHeader = ({ lngName }) => {
           ))
         )}
       </div>
-      {showTerminal && (
-        <div className="flex items-start gap-1 pr-1">
-          <div className="relative flex items-center justify-center">
-            <button
-              className={`flex items-center justify-center ${
-                splitDxr === "horizontal" && "bg-slate-600 bg-opacity-80"
-              } transition-all duration-300 hover:bg-slate-600 hover:bg-opacity-80 p-[4px] rounded-md`}
-              onClick={() => handleSplit("horizontal")}
-              onMouseEnter={() => setIsVHovered(true)}
-              onMouseLeave={() => setIsVHovered(false)}
-            >
-              <img src="/assets/ui_y.png" alt="" width={18} />
-            </button>
-            {isVHovered && (
-              <EditorToolTip
-                dxr={"down"}
-                content={
-                  splitDxr === "horizontal"
-                    ? "vertically split"
-                    : "split vertically"
-                }
-              />
-            )}
+      <div className="flex items-center gap-2">
+        <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md flex items-center justify-center gap-2 transition-all duration-200">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 9v1a3 3 0 003 3h0a3 3 0 003-3V9m-6 0h6m-6 0a3 3 0 00-3 3v0a3 3 0 003 3h6a3 3 0 003-3v0a3 3 0 00-3-3m-6 0V5a3 3 0 013-3h0a3 3 0 013 3v4"
+            />
+          </svg>
+          Detect Bug
+        </button>
+
+        {showTerminal && (
+          <div className="flex items-start gap-1 pr-1">
+            <div className="relative flex items-center justify-center">
+              <button
+                className={`flex items-center justify-center ${
+                  splitDxr === "horizontal" && "bg-slate-600 bg-opacity-80"
+                } transition-all duration-300 hover:bg-slate-600 hover:bg-opacity-80 p-[4px] rounded-md`}
+                onClick={() => handleSplit("horizontal")}
+                onMouseEnter={() => setIsVHovered(true)}
+                onMouseLeave={() => setIsVHovered(false)}
+              >
+                <img src="/assets/ui_y.png" alt="" width={18} />
+              </button>
+              {isVHovered && (
+                <EditorToolTip
+                  dxr={"down"}
+                  content={
+                    splitDxr === "horizontal"
+                      ? "vertically split"
+                      : "split vertically"
+                  }
+                />
+              )}
+            </div>
+            <div className="relative flex items-center justify-center">
+              <button
+                className={`flex items-center justify-center ${
+                  splitDxr === "vertical" && "bg-slate-600 bg-opacity-80"
+                } transition-all duration-300 hover:bg-slate-600 hover:bg-opacity-80 p-[4px] rounded-md`}
+                onClick={() => handleSplit("vertical")}
+                onMouseEnter={() => setIsHHovered(true)}
+                onMouseLeave={() => setIsHHovered(false)}
+              >
+                <img src="/assets/ui_x.png" alt="" width={18} />
+              </button>
+              {isHHovered && (
+                <EditorToolTip
+                  dxr={"down"}
+                  content={
+                    splitDxr === "vertical"
+                      ? "horizontally split"
+                      : "split horizontally"
+                  }
+                />
+              )}
+            </div>
           </div>
-          <div className="relative flex items-center justify-center">
-            <button
-              className={`flex items-center justify-center ${
-                splitDxr === "vertical" && "bg-slate-600 bg-opacity-80"
-              } transition-all duration-300 hover:bg-slate-600 hover:bg-opacity-80 p-[4px] rounded-md`}
-              onClick={() => handleSplit("vertical")}
-              onMouseEnter={() => setIsHHovered(true)}
-              onMouseLeave={() => setIsHHovered(false)}
-            >
-              <img src="/assets/ui_x.png" alt="" width={18} />
-            </button>
-            {isHHovered && (
-              <EditorToolTip
-                dxr={"down"}
-                content={
-                  splitDxr === "vertical"
-                    ? "horizontally split"
-                    : "split horizontally"
-                }
-              />
-            )}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
 
 const EditorCodeBox = () => {
-  const { project, currLng, latestCode, currCode, selectedVersion } =
-    useSelector((state) => state.project);
+  const { project, currLng, latestCode, selectedVersion } = useSelector(
+    (state) => state.project
+  );
   const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
     useSelector((state) => state.editor);
   const { autoSave, notifyInterval } = useSelector((state) => state.setting);
@@ -132,16 +153,16 @@ const EditorCodeBox = () => {
         ? project.code.find((c) => c.version === selectedVersion).js
         : latestCode.js;
   }
-  const lng = currLng;
+
   const code =
     project.type === "snippet" ? latestCode.code : latestCode[currLng];
 
   const selectedMode =
-    lng === "react"
+    currLng === "react"
       ? javascript({ jsx: true })
-      : lng === "html"
+      : currLng === "html"
       ? html()
-      : lng === "css"
+      : currLng === "css"
       ? css()
       : javascript();
 
@@ -205,7 +226,7 @@ const EditorCodeBox = () => {
           >
             <SideMenu />
             <Pane minSize={"20%"}>
-              <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
+              <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
               <SplitPane
                 split={splitDxr}
                 sizes={sizes}
@@ -216,7 +237,7 @@ const EditorCodeBox = () => {
                 }}
               >
                 <Pane>
-                  <Editor code={code} mode={selectedMode} />
+                  <Editor key={currLng} code={code} mode={selectedMode} />
                 </Pane>
 
                 <Pane minSize={"10%"}>
@@ -230,7 +251,7 @@ const EditorCodeBox = () => {
           </SplitPane>
         ) : (
           <>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
             <SplitPane
               split={splitDxr}
               sizes={sizes}
@@ -238,7 +259,7 @@ const EditorCodeBox = () => {
               style={{ height: "95%", minWidth: "20%" }}
             >
               <Pane>
-                <Editor code={code} mode={selectedMode} />
+                <Editor key={currLng} code={code} mode={selectedMode} />
               </Pane>
               <Pane minSize={"10%"}>
                 <ResultTerminal
@@ -258,9 +279,9 @@ const EditorCodeBox = () => {
         >
           <SideMenu />
           <Pane minSize={"20%"}>
-            <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
+            <CodeBoxHeader isSnippet={isSnippet} lngName={currLng} />
             <div className="h-[95%]">
-              <Editor code={code} mode={selectedMode} />
+              <Editor key={currLng} code={code} mode={selectedMode} />
             </div>
           </Pane>
         </SplitPane>
@@ -268,7 +289,7 @@ const EditorCodeBox = () => {
         <>
           <CodeBoxHeader isSnippet={isSnippet} lngName={lng} />
           <div className=" h-[95%]">
-            <Editor code={code} mode={selectedMode} />
+            <Editor key={currLng} code={code} mode={selectedMode} />
           </div>
         </>
       )}
