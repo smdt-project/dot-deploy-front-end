@@ -4,6 +4,7 @@ import {
   sendMessageRequest,
   sendMessageSuccess,
   sendMessageFailure,
+  bugDetectionRequest,
 } from "./chatSlice";
 import { getUserData } from "../../../../features/auth/authData";
 import { setNotifier } from "../../../../ui/notifierSlice";
