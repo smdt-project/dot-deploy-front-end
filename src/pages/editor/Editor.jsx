@@ -135,7 +135,7 @@ const Editor = ({ code }) => {
     }
 
     try {
-      const prompt = `Explain this code snippet from my ${currLng} file:\n\`\`\`${currLng}\n${selectedText}\n\`\`\``;
+      const prompt = `Explain this code snippet from my ${currLng} file:\n${selectedText}\n`;
       // console.log("📝 EDITOR: Generated prompt:", prompt);
 
       // console.log("🔄 EDITOR: About to dispatch setChatInputText...");

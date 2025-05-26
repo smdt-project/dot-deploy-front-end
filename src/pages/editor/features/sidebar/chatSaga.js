@@ -4,6 +4,7 @@ import {
   sendMessageRequest,
   sendMessageSuccess,
   sendMessageFailure,
+  bugDetectionRequest,
 } from "./chatSlice";
 import { getUserData } from "../../../../features/auth/authData";
 import { setNotifier } from "../../../../ui/notifierSlice";
@@ -34,7 +35,7 @@ function* workSendMessage(action) {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (response.data.message === "success") {
@@ -44,7 +45,48 @@ function* workSendMessage(action) {
       yield put(
         setNotifier({
           error: "Failed to request the Model. Please try again later",
-        })
+        }),
+      );
+    }
+  } catch (error) {
+    const message = error.response
+      ? error.response.data
+        ? error.response.data.message
+        : error.message
+      : error.message;
+    yield put(sendMessageFailure(message));
+    yield put(setNotifier({ error: message }));
+  }
+}
+
+function* workBugDetection(action) {
+  const token = getUserData(true);
+
+  try {
+    const response = yield call(
+      axios.post,
+      `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/projects/find-bug`, // Your bug detection endpoint
+      {
+        selectedModel: action.payload.selectedModel,
+        language: action.payload.language,
+        code: action.payload.code,
+      },
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (response.data.message === "success") {
+      yield put(sendMessageSuccess({ data: response.data.data }));
+    } else {
+      yield put(sendMessageFailure(response.data.message));
+      yield put(
+        setNotifier({
+          error: "Failed to analyze code for bugs. Please try again later",
+        }),
       );
     }
   } catch (error) {
@@ -60,6 +102,7 @@ function* workSendMessage(action) {
 
 function* watchSendMessageSaga() {
   yield takeLatest(sendMessageRequest.type, workSendMessage);
+  yield takeLatest(bugDetectionRequest.type, workBugDetection);
 }
 
 export default watchSendMessageSaga;
