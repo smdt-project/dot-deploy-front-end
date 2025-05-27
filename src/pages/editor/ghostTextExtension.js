@@ -61,13 +61,12 @@ export const ghostTextField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-// Create high-precedence keymap for Escape only (Tab is handled in main component)
+// Create high-precedence keymap for Escape
 export const ghostTextKeymap = Prec.highest(
   keymap.of([
     {
       key: "Escape",
       run: (view) => {
-        console.log("Escape pressed");
         const decorations = view.state.field(ghostTextField);
 
         let hasGhostText = false;
@@ -81,6 +80,9 @@ export const ghostTextKeymap = Prec.highest(
         view.dispatch({
           effects: clearGhostText.of(null),
         });
+
+        // Also dispatch a custom event to clear Redux state
+        window.dispatchEvent(new CustomEvent("clearGhostTextFromEscape"));
 
         return true;
       },
