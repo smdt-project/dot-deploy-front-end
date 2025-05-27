@@ -39,7 +39,6 @@ import {
 } from "../../editorSlice";
 import { selectMenu } from "../sidebar/sidebarSlice";
 import Publish from "./Publish";
-import { select } from "redux-saga/effects";
 
 const TabWithIcon = ({ title }) => {
   return (
@@ -170,10 +169,11 @@ const AboutCurrProject = ({ project, isNew }) => {
 const languages = supportedLng.reverse();
 
 const MenuTabContent = ({ tabName, selectAction }) => {
-  const { isCreating, newProLngName, newProType, isCreatingModalMinimized } =
-    useSelector((state) => state.editor);
-  const { project, currCode, currLng, isNew } = useSelector(
-    (state) => state.project
+  const { newProLngName, newProType, isCreatingModalMinimized } = useSelector(
+    (state) => state.editor,
+  );
+  const { project, currCode, currLng, isNew, selectedVersion } = useSelector(
+    (state) => state.project,
   );
   const [isHovered, setIsHovered] = useState(false);
   const [isAboutHovered, setIsAboutHovered] = useState(false);
@@ -207,30 +207,46 @@ const MenuTabContent = ({ tabName, selectAction }) => {
   };
 
   const exportAsFile = () => {
-    const selectedVersion = project.selectedVersion;
+    const selectedVersionObj = project.code.find(
+      (version) => version.version === selectedVersion,
+    );
+
+    if (!selectedVersionObj) {
+      console.error("Selected version not found");
+      return;
+    }
+
     if (isSnippet) {
       const lngName = project.lngName;
       const info = getLngInfo(lngName);
       exportCodeAsFile(
         [info.fileName],
         [info.title],
-        [project.code[selectedVersion].code]
+        [selectedVersionObj.code],
       );
     } else {
       exportCodeAsFile(
         ["index", "style", "script"],
         ["html", "css", "js"],
         [
-          project.code[selectedVersion].html,
-          project.code[selectedVersion].css,
-          project.code[selectedVersion].js,
-        ]
+          selectedVersionObj.html,
+          selectedVersionObj.css,
+          selectedVersionObj.js,
+        ],
       );
     }
   };
 
   const exportAsZip = () => {
-    const selectedVersion = project.selectedVersion;
+    const selectedVersionObj = project.code.find(
+      (version) => version.version === selectedVersion,
+    );
+
+    if (!selectedVersionObj) {
+      console.error("Selected version not found");
+      return;
+    }
+
     if (isSnippet) {
       const lngName = project.lngName;
       const info = getLngInfo(lngName);
@@ -238,7 +254,7 @@ const MenuTabContent = ({ tabName, selectAction }) => {
         {
           fileName: info.fileName,
           extension: info.title,
-          code: project.code[selectedVersion].code,
+          code: selectedVersionObj.code,
         },
       ]);
     } else {
@@ -246,17 +262,17 @@ const MenuTabContent = ({ tabName, selectAction }) => {
         {
           fileName: "index",
           extension: "html",
-          code: project.code[selectedVersion].html,
+          code: selectedVersionObj.html,
         },
         {
           fileName: "style",
           extension: "css",
-          code: project.code[selectedVersion].html,
+          code: selectedVersionObj.css,
         },
         {
           fileName: "script",
           extension: "js",
-          code: project.code[selectedVersion].html,
+          code: selectedVersionObj.js,
         },
       ];
       exportCodeAsZip(currProjectName, files);
@@ -618,7 +634,7 @@ const EditorMenu = ({ show, setShow }) => {
   const onSettingClick = () => {
     dispatch(handleSideMenu(true));
     dispatch(
-      selectMenu({ name: "setting", title: "Settings & Customizations" })
+      selectMenu({ name: "setting", title: "Settings & Customizations" }),
     );
     selectAction();
   };
