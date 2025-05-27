@@ -73,7 +73,9 @@ function* workFetchGhostText(action) {
   try {
     const response = yield call(
       axios.post,
-      `${import.meta.env.VITE_REACT_APP_API_URL}/api/v1/projects/auto-completion`,
+      `${
+        import.meta.env.VITE_REACT_APP_API_URL
+      }/api/v1/projects/auto-completion`,
       {
         selectedModel: modelToUse,
         language,
@@ -85,7 +87,7 @@ function* workFetchGhostText(action) {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (
@@ -96,19 +98,16 @@ function* workFetchGhostText(action) {
       const rawSuggestion = response.data.data;
       const cleanedSuggestion = cleanMarkdownSuggestion(rawSuggestion);
 
-      //console.log("Raw suggestion:", rawSuggestion);
-      //console.log("Cleaned suggestion:", cleanedSuggestion);
-
       yield put(fetchGhostTextSuccess({ suggestion: cleanedSuggestion }));
     } else if (response.data && response.data.data === "") {
       yield put(fetchGhostTextSuccess({ suggestion: "" }));
     } else {
       console.error(
         "Unexpected API response structure for ghost text:",
-        response.data,
+        response.data
       );
       yield put(
-        fetchGhostTextFailure("Received invalid suggestion format from server"),
+        fetchGhostTextFailure("Received invalid suggestion format from server")
       );
     }
   } catch (error) {
