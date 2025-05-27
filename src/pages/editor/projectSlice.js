@@ -37,7 +37,7 @@ const projectSlice = createSlice({
       };
       state.latestCode =
         action.payload.project.code[0] || initialState.project.code[0];
-      state.selectedVersion = state.project.code[0]?.version;
+      state.selectedVersion = state.project.code[0]?.version || 1;
       state.versions = action.payload.project.code;
     },
     selectVersion: (state, action) => {
