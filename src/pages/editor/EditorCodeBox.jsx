@@ -21,10 +21,14 @@ import { updateProjectRequest } from "./projectSlice";
 import { bugDetectionRequest } from "./features/sidebar/chatSlice";
 import { setActiveTab } from "./features/sidebar/sidebarSlice";
 import { IoBug } from "react-icons/io5";
+import { VscDebugStart } from "react-icons/vsc";
+import { useRunCode } from "../../hooks/useRunCode";
 
 const CodeBoxHeader = ({ lngName }) => {
   const { showTerminal, splitDxr } = useSelector((state) => state.editor);
-  const { project, currLng, currCode } = useSelector((state) => state.project);
+  const { project, currLng, currCode } = useSelector(
+    (state) => state.project
+  );
   const { selectedModel } = useSelector((state) => state.chat);
 
   const isSnippet = project.type === "snippet";
@@ -33,6 +37,7 @@ const CodeBoxHeader = ({ lngName }) => {
   const [isHHovered, setIsHHovered] = useState(false);
   const dispatch = useDispatch();
   const handleSelection = useUiUpdate();
+  const runCode = useRunCode();
 
   const handleSplit = (dxr) => dispatch(updateSplit(dxr));
 
@@ -41,8 +46,8 @@ const CodeBoxHeader = ({ lngName }) => {
       bugDetectionRequest({
         selectedModel,
         language: currLng,
-        code: currCode,
-      }),
+        code: currCode
+      })
     );
 
     dispatch(setActiveTab({ tab: "chat", title: "AI Assistant" }));
@@ -69,25 +74,36 @@ const CodeBoxHeader = ({ lngName }) => {
         )}
       </div>
       <div className="flex items-center gap-2">
+        {isSnippet && (
+          <button
+            onClick={() => runCode()}
+            className={`
+    group relative overflow-hidden flex items-center justify-center gap-2.5
+    bg-slate-700 hover:bg-slate-600
+    text-white font-medium text-sm
+    px-3 py-[4px] rounded-md
+    cursor-pointer transition-all duration-300
+  `}
+          >
+            <VscDebugStart className="text-green-500" size={15} />
+            <span className="text-sm font-semibold tracking-wide">
+              Run Code
+            </span>
+          </button>
+        )}
         <button
           onClick={handleDetectBug}
           className={`
-    group relative overflow-hidden
+    group relative overflow-hidden flex items-center justify-center gap-2.5
     bg-slate-700 hover:bg-slate-600
     text-white font-medium text-sm
-    px-6 py-2 rounded-xl
-    cursor-pointer
+    px-3 py-[4px] rounded-md transition-all duration-300 cursor-pointer
   `}
         >
-          <div className="relative flex items-center justify-center gap-2.5">
-            <IoBug
-              className={`
-        w-5 h-5 
-        text-red-500
-      `}
-            />
-            <span className="font-semibold tracking-wide">Detect Bugs</span>
-          </div>
+          <IoBug className="text-red-500" size={15} />
+          <span className="text-sm font-semibold tracking-wide">
+            Detect Bugs
+          </span>
         </button>
 
         {showTerminal && (
@@ -145,7 +161,7 @@ const CodeBoxHeader = ({ lngName }) => {
 
 const EditorCodeBox = () => {
   const { project, currLng, latestCode, selectedVersion } = useSelector(
-    (state) => state.project,
+    (state) => state.project
   );
   const { isCreating, showTerminal, showSideMenu, splitDxr, isPublishing } =
     useSelector((state) => state.editor);
@@ -180,10 +196,10 @@ const EditorCodeBox = () => {
     currLng === "react"
       ? javascript({ jsx: true })
       : currLng === "html"
-        ? html()
-        : currLng === "css"
-          ? css()
-          : javascript();
+      ? html()
+      : currLng === "css"
+      ? css()
+      : javascript();
 
   const [sizes, setSizes] = useState(showTerminal ? [70, 30] : [100, 0]);
   const [horizSizes, setHorizSizes] = useState([15, 85]);
@@ -213,9 +229,9 @@ const EditorCodeBox = () => {
             updateLogs(
               JSON.stringify({
                 type: "info",
-                info: `Changes are auto saved - ${date.toISOString()}`,
-              }),
-            ),
+                info: `Changes are auto saved - ${date.toISOString()}`
+              })
+            )
           );
         }
       }
@@ -252,7 +268,7 @@ const EditorCodeBox = () => {
                 onChange={setSizes}
                 style={{
                   height: "95%",
-                  minWidth: "20% ",
+                  minWidth: "20% "
                 }}
               >
                 <Pane>
