@@ -34,6 +34,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.userData = action.payload;
       state.user = action.payload;
+      state.user.userId = action.payload._id;
     },
     userDataFailure: (state, action) => {
       state.isLoading = false;
