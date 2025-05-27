@@ -44,6 +44,7 @@ const Editor = ({ code }) => {
   const justAcceptedRef = useRef(false);
   const isMountedRef = useRef(true);
   const hasGhostTextRef = useRef(false);
+  const editorInstanceIdRef = useRef(`${currLng}-${Date.now()}`); // Unique identifier for this editor instance
 
   const [acceptedSuggestion, setAcceptedSuggestion] = useState(false);
 
@@ -95,40 +96,57 @@ const Editor = ({ code }) => {
     };
   }, [clearAllTimers, editorView]);
 
+  // Language change effect - clears everything when switching files/languages
   useEffect(() => {
     if (currentLanguageRef.current !== currLng) {
-      currentLanguageRef.current = currLng;
+      console.log(
+        `Language changed from ${currentLanguageRef.current} to ${currLng}`,
+      );
 
+      currentLanguageRef.current = currLng;
+      editorInstanceIdRef.current = `${currLng}-${Date.now()}`; // New instance ID
+
+      // Clear all timers and state
       clearAllTimers();
 
+      // ALWAYS clear Redux ghost text state when switching languages
       dispatch(clearGhostText());
+
+      // Clear editor ghost text
       if (editorView) {
         editorView.dispatch({
           effects: clearGhostTextEffect.of(null),
         });
       }
 
+      // Reset all refs and state
       setAcceptedSuggestion(false);
       lastSuggestionRef.current = null;
       justAcceptedRef.current = false;
       hasGhostTextRef.current = false;
+      cursorPositionRef.current = 0;
     }
-
-    return () => {};
   }, [currLng, editorView, dispatch, clearAllTimers]);
 
+  // Also clear ghost text when the code prop changes (file content switch)
+  useEffect(() => {
+    // Clear Redux state when code changes (different file)
+    dispatch(clearGhostText());
+
+    // Clear editor state
+    if (editorView) {
+      editorView.dispatch({
+        effects: clearGhostTextEffect.of(null),
+      });
+    }
+
+    hasGhostTextRef.current = false;
+    lastSuggestionRef.current = null;
+
+    console.log(`Code changed, cleared ghost text for ${currLng}`);
+  }, [code, dispatch, editorView, currLng]);
+
   const handleChatWithAI = (selectedText) => {
-    //console.log("🚀 EDITOR: handleChatWithAI called!");
-    //console.log("📝 EDITOR: Selected text:", selectedText);
-    //console.log("🔧 EDITOR: Current currLng:", currLng);
-
-    // Check if dispatch function exists
-    // console.log("📦 EDITOR: Dispatch function:", typeof dispatch);
-
-    // Check if actions exist
-    // console.log("⚡ EDITOR: setChatInputText action:", typeof setChatInputText);
-    // console.log("⚡ EDITOR: setActiveTab action:", typeof setActiveTab);
-
     if (!selectedText || selectedText.trim() === "") {
       console.warn("⚠️ EDITOR: No text selected!");
       return;
@@ -136,15 +154,8 @@ const Editor = ({ code }) => {
 
     try {
       const prompt = `Explain this code snippet from my ${currLng} file:\n${selectedText}\n`;
-      // console.log("📝 EDITOR: Generated prompt:", prompt);
-
-      // console.log("🔄 EDITOR: About to dispatch setChatInputText...");
       dispatch(setChatInputText(prompt));
-      // console.log("✅ EDITOR: setChatInputText dispatched!");
-
-      // console.log("🔄 EDITOR: About to dispatch setActiveTab...");
       dispatch(setActiveTab({ tab: "chat", title: "AI Assistant" }));
-      // console.log("✅ EDITOR: setActiveTab dispatched!");
     } catch (error) {
       console.error("❌ EDITOR: Error in handleChatWithAI:", error);
     }
@@ -156,6 +167,9 @@ const Editor = ({ code }) => {
     setEditorView(view);
     cursorPositionRef.current = view.state.selection.main.head;
 
+    // Clear any existing ghost text when creating new editor
+    dispatch(clearGhostText());
+
     const handleKeyDown = (e) => {
       if (!isMountedRef.current) return;
 
@@ -163,10 +177,6 @@ const Editor = ({ code }) => {
         const hasGhost = checkForGhostText(view);
 
         if (hasGhost) {
-          // console.log(
-          //   "Tab intercepted - ghost text present, preventing default behavior",
-          // );
-
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
@@ -189,8 +199,6 @@ const Editor = ({ code }) => {
           );
 
           if (ghostText) {
-            // console.log("Accepting ghost text:", ghostText.text);
-
             const endPosition = ghostText.from + ghostText.text.length;
 
             view.dispatch({
@@ -242,25 +250,28 @@ const Editor = ({ code }) => {
     };
   };
 
+  // Ghost text suggestion application effect - ONLY apply if no language change occurred
   useEffect(() => {
+    // Ignore any suggestions if we just switched languages or if editor is not ready
+    if (!editorView || !isMountedRef.current) {
+      return;
+    }
+
+    // If there's a suggestion, only apply it if all conditions are met
     if (
-      editorView &&
       ghostTextSuggestion &&
       !isGhostTextLoading &&
       !acceptedSuggestion &&
-      !justAcceptedRef.current &&
-      isMountedRef.current
+      !justAcceptedRef.current
     ) {
-      // console.log("Received suggestion:", ghostTextSuggestion);
+      console.log(`Applying suggestion for language: ${currLng}`);
 
       const cleanedSuggestion = ghostTextSuggestion.trim();
 
       if (cleanedSuggestion === lastSuggestionRef.current) {
-        // console.log("Skipping duplicate suggestion");
+        console.log("Skipping duplicate suggestion");
         return;
       }
-
-      // console.log("Using suggestion:", cleanedSuggestion);
 
       if (cleanedSuggestion.length > 0) {
         const cursor = cursorPositionRef.current;
@@ -272,13 +283,20 @@ const Editor = ({ code }) => {
         });
         hasGhostTextRef.current = true;
       }
-    } else if (!ghostTextSuggestion && editorView && isMountedRef.current) {
+    } else if (!ghostTextSuggestion && editorView) {
+      // Clear ghost text if no suggestion
       editorView.dispatch({
         effects: clearGhostTextEffect.of(null),
       });
       hasGhostTextRef.current = false;
     }
-  }, [ghostTextSuggestion, isGhostTextLoading, editorView, acceptedSuggestion]);
+  }, [
+    ghostTextSuggestion,
+    isGhostTextLoading,
+    editorView,
+    acceptedSuggestion,
+    currLng,
+  ]);
 
   useEffect(() => {
     if (
@@ -290,6 +308,18 @@ const Editor = ({ code }) => {
       hasGhostTextRef.current = false;
     }
   }, [ghostTextSuggestion, isGhostTextLoading, acceptedSuggestion]);
+
+  useEffect(() => {
+    const handleEscapeEvent = () => {
+      dispatch(clearGhostText());
+    };
+
+    window.addEventListener("clearGhostTextFromEscape", handleEscapeEvent);
+
+    return () => {
+      window.removeEventListener("clearGhostTextFromEscape", handleEscapeEvent);
+    };
+  }, [dispatch]);
 
   const handleChange = (value, viewUpdate) => {
     if (!isMountedRef.current) return;
@@ -325,7 +355,6 @@ const Editor = ({ code }) => {
         );
 
         if (isUserTyping) {
-          // console.log("User is typing, will request new suggestion");
           justAcceptedRef.current = false;
 
           debounceTimerRef.current = setTimeout(() => {
@@ -339,6 +368,7 @@ const Editor = ({ code }) => {
                   context: context,
                   selectedModel:
                     selectedModelForCompletion || "Gemini 2.0 Flash",
+                  editorInstanceId: editorInstanceIdRef.current, // Include instance ID
                 }),
               );
             }
