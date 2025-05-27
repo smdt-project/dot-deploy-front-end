@@ -25,6 +25,7 @@ const completionSlice = createSlice({
     },
     clearGhostText: (state) => {
       state.ghostTextSuggestion = null;
+      state.isGhostTextLoading = false;
     },
   },
 });
