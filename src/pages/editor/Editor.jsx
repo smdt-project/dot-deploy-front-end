@@ -19,8 +19,16 @@ import { setInputText as setChatInputText } from "./features/sidebar/chatSlice";
 import { setActiveTab } from "./features/sidebar/sidebarSlice";
 
 const Editor = ({ code }) => {
-  const { codeFontSize, codeTabSize, closeBrackets, lineNo, foldGut, holder } =
-    useSelector((state) => state.setting);
+  const {
+    codeFontSize,
+    codeTabSize,
+    closeBrackets,
+    lineNo,
+    foldGut,
+    holder,
+    ghostTextEnabled,
+  } = useSelector((state) => state.setting);
+
   const { searchPanel } = useSelector((state) => state.editor);
   const { currLng } = useSelector((state) => state.project);
   const { ghostTextSuggestion, isGhostTextLoading } = useSelector(
@@ -44,7 +52,7 @@ const Editor = ({ code }) => {
   const justAcceptedRef = useRef(false);
   const isMountedRef = useRef(true);
   const hasGhostTextRef = useRef(false);
-  const editorInstanceIdRef = useRef(`${currLng}-${Date.now()}`); // Unique identifier for this editor instance
+  const editorInstanceIdRef = useRef(`${currLng}-${Date.now()}`);
 
   const [acceptedSuggestion, setAcceptedSuggestion] = useState(false);
 
@@ -96,7 +104,6 @@ const Editor = ({ code }) => {
     };
   }, [clearAllTimers, editorView]);
 
-  // Language change effect - clears everything when switching files/languages
   useEffect(() => {
     if (currentLanguageRef.current !== currLng) {
       console.log(
@@ -104,22 +111,18 @@ const Editor = ({ code }) => {
       );
 
       currentLanguageRef.current = currLng;
-      editorInstanceIdRef.current = `${currLng}-${Date.now()}`; // New instance ID
+      editorInstanceIdRef.current = `${currLng}-${Date.now()}`;
 
-      // Clear all timers and state
       clearAllTimers();
 
-      // ALWAYS clear Redux ghost text state when switching languages
       dispatch(clearGhostText());
 
-      // Clear editor ghost text
       if (editorView) {
         editorView.dispatch({
           effects: clearGhostTextEffect.of(null),
         });
       }
 
-      // Reset all refs and state
       setAcceptedSuggestion(false);
       lastSuggestionRef.current = null;
       justAcceptedRef.current = false;
@@ -128,12 +131,9 @@ const Editor = ({ code }) => {
     }
   }, [currLng, editorView, dispatch, clearAllTimers]);
 
-  // Also clear ghost text when the code prop changes (file content switch)
   useEffect(() => {
-    // Clear Redux state when code changes (different file)
     dispatch(clearGhostText());
 
-    // Clear editor state
     if (editorView) {
       editorView.dispatch({
         effects: clearGhostTextEffect.of(null),
@@ -167,7 +167,6 @@ const Editor = ({ code }) => {
     setEditorView(view);
     cursorPositionRef.current = view.state.selection.main.head;
 
-    // Clear any existing ghost text when creating new editor
     dispatch(clearGhostText());
 
     const handleKeyDown = (e) => {
@@ -250,14 +249,22 @@ const Editor = ({ code }) => {
     };
   };
 
-  // Ghost text suggestion application effect - ONLY apply if no language change occurred
   useEffect(() => {
-    // Ignore any suggestions if we just switched languages or if editor is not ready
+    if (!ghostTextEnabled) {
+      if (editorView) {
+        editorView.dispatch({
+          effects: clearGhostTextEffect.of(null),
+        });
+      }
+
+      hasGhostTextRef.current = false;
+      return;
+    }
+
     if (!editorView || !isMountedRef.current) {
       return;
     }
 
-    // If there's a suggestion, only apply it if all conditions are met
     if (
       ghostTextSuggestion &&
       !isGhostTextLoading &&
@@ -284,7 +291,6 @@ const Editor = ({ code }) => {
         hasGhostTextRef.current = true;
       }
     } else if (!ghostTextSuggestion && editorView) {
-      // Clear ghost text if no suggestion
       editorView.dispatch({
         effects: clearGhostTextEffect.of(null),
       });
@@ -296,6 +302,7 @@ const Editor = ({ code }) => {
     editorView,
     acceptedSuggestion,
     currLng,
+    ghostTextEnabled,
   ]);
 
   useEffect(() => {
@@ -346,7 +353,7 @@ const Editor = ({ code }) => {
       }
       hasGhostTextRef.current = false;
 
-      if (!acceptedSuggestion && !justAcceptedRef.current) {
+      if (!acceptedSuggestion && !justAcceptedRef.current && ghostTextEnabled) {
         const isUserTyping = viewUpdate.transactions.some(
           (tr) =>
             tr.isUserEvent("input.type") ||
@@ -368,7 +375,7 @@ const Editor = ({ code }) => {
                   context: context,
                   selectedModel:
                     selectedModelForCompletion || "Gemini 2.0 Flash",
-                  editorInstanceId: editorInstanceIdRef.current, // Include instance ID
+                  editorInstanceId: editorInstanceIdRef.current,
                 }),
               );
             }
@@ -418,15 +425,15 @@ const Editor = ({ code }) => {
 
   return (
     <div className="relative w-full h-full">
-      {/* Loading spinner */}
-      {isGhostTextLoading && (
+      {ghostTextEnabled && isGhostTextLoading && (
         <div className="absolute top-2 right-2 z-10 flex items-center gap-2 text-xs text-gray-400">
           <CompletionLoader size="w-3 h-3" />
           <span>Generating...</span>
         </div>
       )}
 
-      {ghostTextSuggestion &&
+      {ghostTextEnabled &&
+        ghostTextSuggestion &&
         !isGhostTextLoading &&
         !justAcceptedRef.current &&
         hasGhostTextRef.current && (
