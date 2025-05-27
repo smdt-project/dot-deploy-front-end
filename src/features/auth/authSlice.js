@@ -15,6 +15,7 @@ const authSlice = createSlice({
   reducers: {
     authStatus: (state, action) => {
       state.isUserSignedIn = action.payload.isUserSignedIn;
+      console.log("authStatus", action.payload);
       state.user = action.payload.userData;
     },
     logOutRequest: (state) => {
@@ -32,8 +33,10 @@ const authSlice = createSlice({
     },
     userDataSuccess: (state, action) => {
       state.isLoading = false;
+      console.log("userDataSuccess", action.payload);
       state.userData = action.payload;
       state.user = action.payload;
+      state.user.userId = action.payload._id;
     },
     userDataFailure: (state, action) => {
       state.isLoading = false;
