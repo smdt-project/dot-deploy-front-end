@@ -1,7 +1,7 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { indentUnit } from "@codemirror/language";
 import CodeMirror, { EditorView } from "@uiw/react-codemirror";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { BiInfoCircle, BiXCircle } from "react-icons/bi";
 import { FiMessageCircle } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
@@ -14,7 +14,10 @@ import UserReactComponent from "../../ui/UserReactComponent";
 import { overridingScript } from "../../utils/constants";
 import { updateLogs } from "./editorSlice";
 
-const ErrorBox = ({ error }) => {
+const ErrorBox = ({ log }) => {
+  const { project } = useSelector((state) => state.project);
+  const isSnippet = project.type === "snippet";
+
   return (
     <div
       className={`flex items-start gap-2 bg-[#70474764] bg-opacity-30 p-3 rounded-lg
@@ -26,14 +29,16 @@ const ErrorBox = ({ error }) => {
       <div className="flex-grow flex flex-col gap-1">
         <div className="flex items-start flex-wrap gap-1">
           <span className="text-red-600 font-semibold">
-            {error.message.split(":")[0]}:
+            {isSnippet ? log.status : log.err.message.split(":")[0]}:
           </span>
-          <span className="text-slate-300">
-            {error.message.split(":").slice(1).join(":")}
-          </span>
+          <code className="text-slate-300">
+            {isSnippet
+              ? log.error
+              : log.err.message.split(":").slice(1).join(":")}
+          </code>
         </div>
         <span className="text-color-5 font-sans self-end font-semibold">
-          {error.source}
+          {isSnippet ? log.msg : log.err.source}
         </span>
       </div>
     </div>
@@ -47,13 +52,13 @@ const ErrorLog = ({ logs }) => {
     >
       {logs.map(
         (log, index) =>
-          log.type === "error" && <ErrorBox key={index} error={log.err} />
+          log.type === "error" && <ErrorBox key={index} log={log} />
       )}
     </div>
   );
 };
 
-const MessageBox = ({ message }) => {
+const MessageBox = ({ log, isSnippet }) => {
   return (
     <div
       className={`text-slate-300 bg-color-5 bg-opacity-20 rounded-md flex items-start gap-3 border-b-[1px] border-[#555] p-1 active:bg-color-7  active:text-white justify-between`}
@@ -62,22 +67,68 @@ const MessageBox = ({ message }) => {
         <div>
           <IoIosArrowForward className="self-start mt-1" />
         </div>
-        <span>{message}</span>
+        {isSnippet ? (
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium font-code">Result:</span>
+            <span className="px-4 py-1">{log.output}</span>
+            <span className="text-sm self-end">{log.msg}</span>
+          </div>
+        ) : (
+          <span className="">{log.message}</span>
+        )}
       </div>
     </div>
   );
 };
 
-const MessageLog = ({ logs }) => {
+const UserInput = () => {
+  const { project } = useSelector((state) => state.project);
+  const [value, setValue] = useState("");
+  const textareaRef = useRef(null);
+
+  const adjustHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [value]);
+
   return (
-    <div
-      className={`w-full flex flex-col gap-2 p-2 border-b-[1px] border-[#555] `}
-    >
-      {logs.map(
-        (log, index) =>
-          log.type === "message" && (
-            <MessageBox key={index} message={log.message} />
-          )
+    <textarea
+      ref={textareaRef}
+      type="text"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      className="flex-grow bg-transparent border-none outline-none text-white resize-none min-h-[20px]"
+      rows={1}
+    />
+  );
+};
+
+const MessageLog = ({ logs }) => {
+  const { project } = useSelector((state) => state.project);
+  const isSnippet = project.type === "snippet";
+
+  return (
+    <div className={`w-full flex flex-col gap-2 p-2 `}>
+      <div className="flex flex-col gap-2 pb-2 border-b-[1px] border-[#555]">
+        {logs.map(
+          (log, index) =>
+            log.type === "message" && (
+              <MessageBox key={index} log={log} isSnippet={isSnippet} />
+            )
+        )}
+      </div>
+      {isSnippet && (
+        <div className="flex items-start gap-1 text-slate-400 w-full">
+          <IoIosArrowForward className="text-slate-400" />
+          <UserInput />
+        </div>
       )}
     </div>
   );
@@ -142,18 +193,18 @@ const InfoBox = ({ info }) => {
             extensions={[
               javascript(),
               EditorView.lineWrapping,
-              indentUnit.of(4),
+              indentUnit.of(4)
             ]}
             basicSetup={{
               lineNumbers: false,
               tabSize: 4,
               mode: javascript(),
               syntaxHighlighting: true,
-              foldGutter: true,
+              foldGutter: true
             }}
             style={{
               fontSize: "20px",
-              paddingLeft: "",
+              paddingLeft: ""
             }}
           />
         </div>
@@ -178,7 +229,7 @@ const InfoLog = ({ logs }) => {
 const Terminal = ({ srcDoc, isOutput }) => {
   srcDoc = srcDoc.replace("/override/", overridingScript);
   const { logs } = useSelector((state) => state.editor);
-  const { project, currLng, currCode, latestCode } = useSelector(
+  const { project, currLng, latestCode, runResult } = useSelector(
     (state) => state.project
   );
   const [sizes, setSizes] = useState([30, 70]);
@@ -201,31 +252,63 @@ const Terminal = ({ srcDoc, isOutput }) => {
     currLogs = infos;
   }
 
+  const isSnippet = project.type === "snippet";
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     const handleMessages = (event) => {
-      const { type, message } = event.data;
+      if (!isSnippet) {
+        const { type, message } = event.data;
 
-      if (type === "log" || type === "error") {
-        const fileName =
-          currLng === "css"
-            ? "style.css"
-            : currLng === "html"
-            ? "index.html"
-            : "script.js";
-        const src =
-          message.source === "about:srcdoc"
-            ? `${project.name.split(" ").join("_")}/${fileName}`
-            : message.source;
-        const err = { ...message, source: src };
-        dispatch(updateLogs(JSON.stringify({ type, err })));
+        if (type === "log" || type === "error") {
+          const fileName =
+            currLng === "css"
+              ? "style.css"
+              : currLng === "html"
+              ? "index.html"
+              : "script.js";
+          const src =
+            message.source === "about:srcdoc"
+              ? `${project.name.split(" ").join("_")}/${fileName}`
+              : message.source;
+          const err = { ...message, source: src };
+          dispatch(updateLogs(JSON.stringify({ type, err })));
+        }
       }
     };
 
     window.addEventListener("message", handleMessages);
     return () => window.removeEventListener("message", handleMessages);
-  }, [dispatch, currLng, project.name]);
+  }, [dispatch, currLng, project.name, isSnippet]);
+
+  useEffect(() => {
+    if (isSnippet && runResult.status) {
+      if (runResult.stderr) {
+        dispatch(
+          updateLogs(
+            JSON.stringify({
+              type: "error",
+              status: runResult.status,
+              error: runResult.stderr,
+              msg: runResult.message
+            })
+          )
+        );
+      } else {
+        dispatch(
+          updateLogs(
+            JSON.stringify({
+              type: "message",
+              status: runResult.status,
+              output: runResult.stdout,
+              msg: runResult.message
+            })
+          )
+        );
+      }
+    }
+  }, [isSnippet, runResult]);
 
   const resetSizes = (newSizes) => setSizes(newSizes);
   const selectLog = (log) => {
@@ -331,7 +414,7 @@ const Terminal = ({ srcDoc, isOutput }) => {
               {selectedLog === "error" && <ErrorLog logs={currLogs} />}
               {selectedLog === "warning" && <WarningLog logs={currLogs} />}
               {selectedLog === "info" && <InfoLog logs={currLogs} />}
-              {selectLog !== "error" && (
+              {selectedLog !== "message" && (
                 <div className="text-slate-400">
                   <IoIosArrowForward />
                 </div>

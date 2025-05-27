@@ -15,9 +15,11 @@ import watchPostCreateSagas, {
   watchPostUpdateSagas,
 } from "../pages/community/features/comSidebar/postSaga";
 import watchSaveSagas from "../pages/editor/features/editorheader/saveSaga";
-import watchProjectUpdateSaga from "../pages/editor/projectSaga";
+import watchProjectUpdateSaga, {
+  watchSnippetRunSaga
+} from "../pages/editor/projectSaga";
 import watchProfileSaga, {
-  watchItemDeleteSaga,
+  watchItemDeleteSaga
 } from "../pages/profile/profileSaga";
 import { watchSearchSaga } from "../features/search/searchSaga";
 import watchSendMessageSaga from "../pages/editor/features/sidebar/chatSaga";
@@ -52,6 +54,7 @@ function* rootSaga() {
     fork(watchOrganizationsSaga),
     fork(watchApproveInvitation),
     fork(watchFetchGhostTextSaga),
+    fork(watchSnippetRunSaga)
   ]);
 }
 

@@ -7,12 +7,12 @@ const initialState = {
       {
         html: "",
         css: "",
-        js: "",
+        js: ""
         // , version: 1
-      },
+      }
     ],
     type: "ui",
-    lngName: "html",
+    lngName: "html"
   },
   currLng: "html",
   versions: [],
@@ -23,6 +23,13 @@ const initialState = {
   error: false,
   isNew: true,
   isCommititng: false,
+  isRunning: false,
+  runResult: {
+    stdout: "",
+    stderr: "",
+    status: "",
+    message: ""
+  }
 };
 
 const projectSlice = createSlice({
@@ -33,7 +40,7 @@ const projectSlice = createSlice({
       state.isNew = action.payload.isNew;
       state.project = {
         ...action.payload.project,
-        code: action.payload.project.code || initialState.project.code,
+        code: action.payload.project.code || initialState.project.code
       };
       state.latestCode =
         action.payload.project.code[0] || initialState.project.code[0];
@@ -49,25 +56,25 @@ const projectSlice = createSlice({
     updateSnippetCode: (state, action) => {
       state.project = {
         ...state.project,
-        code: action.payload,
+        code: action.payload
       };
     },
     updateHTML: (state, action) => {
       state.latestCode = {
         ...state.latestCode,
-        html: action.payload,
+        html: action.payload
       };
     },
     updateCSS: (state, action) => {
       state.latestCode = {
         ...state.latestCode,
-        css: action.payload,
+        css: action.payload
       };
     },
     updateJS: (state, action) => {
       state.latestCode = {
         ...state.latestCode,
-        js: action.payload,
+        js: action.payload
       };
     },
     setLatestCode: (state, action) => {
@@ -105,7 +112,15 @@ const projectSlice = createSlice({
     toggleCommitting: (state, action) => {
       state.isCommititng = action.payload;
     },
-  },
+    runSnippetRequest: (state) => {
+      state.isRunning = true;
+      state.runResult = initialState.runResult;
+    },
+    runSnippetSuccess: (state, action) => {
+      state.isRunning = false;
+      state.runResult = action.payload;
+    }
+  }
 });
 
 export const {
@@ -122,6 +137,8 @@ export const {
   updateProjectSuccess,
   updateProjectFailure,
   toggleCommitting,
+  runSnippetRequest,
+  runSnippetSuccess
 } = projectSlice.actions;
 
 export default projectSlice.reducer;
