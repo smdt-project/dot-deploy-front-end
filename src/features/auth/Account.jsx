@@ -18,6 +18,7 @@ const Account = () => {
 
   const handleLogOut = () => {
     dispatch(logOutRequest());
+    navigateTo("/");
     setIsOpened(false);
   };
 

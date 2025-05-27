@@ -36,7 +36,6 @@ const AboutProject = ({ project, goToOwner }) => {
     cssCode = project.code[0]?.css;
     jsCode = project.code[0]?.js;
   }
-  console.log(htmlCode, cssCode, jsCode);
 
   const srcDoc = `
 		<html>
