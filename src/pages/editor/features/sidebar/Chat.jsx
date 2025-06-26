@@ -32,6 +32,7 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const textAreaRef = useRef(null);
+  const dropdownRef = useRef(null);
   const { user } = useSelector((state) => state.auth);
   const { currLng, currCode } = useSelector((state) => state.project);
   const abortControllerRef = useRef(null);
@@ -61,6 +62,19 @@ const Chat = () => {
       );
     }
   }, [initialInput, dispatch]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsModelDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (messages.length === 0) {
@@ -250,7 +264,7 @@ const Chat = () => {
             <IoClose size={16} />
           </button>
 
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
               className="flex items-center gap-2 px-3 py-1.5 text-xs rounded-md bg-[#2d2d2d] hover:bg-[#3e3e3e] transition-colors border border-slate-700"

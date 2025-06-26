@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BiExport, BiPaste, BiTerminal } from "react-icons/bi";
 import { BsFileCode } from "react-icons/bs";
 import { CgCommunity } from "react-icons/cg";
@@ -618,6 +618,23 @@ const EditorMenu = ({ show, setShow }) => {
   } = useSelector((state) => state.editor);
   const [selectedTab, setSelectedTab] = useState("");
   const dispatch = useDispatch();
+  const menuRef = useRef(null);
+
+  const handleClickOutside = useCallback(
+    (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setSelectedTab("");
+      }
+    },
+    [setSelectedTab],
+  );
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
 
   const handleClick = (tabName) =>
     setSelectedTab((selectedTab) => (selectedTab === tabName ? "" : tabName));
@@ -640,7 +657,7 @@ const EditorMenu = ({ show, setShow }) => {
   };
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between" ref={menuRef}>
       {show && (
         <div
           className="flex sm:hidden text-slate-300 p-1 rounded-md mx-2 transition-all duration-300 hover:bg-slate-600 cursor-pointer"
