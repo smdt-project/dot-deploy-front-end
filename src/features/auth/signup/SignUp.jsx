@@ -92,18 +92,18 @@ const SignUp = () => {
 					>
 						Sign Up
 					</button>
-					<div className="flex items-center gap-1 py-2">
+					{/* <div className="flex items-center gap-1 py-2">
 						<div className="flex-grow h-1 bg-gradient-to-l from-slate-700 via-transparent to-slate-800 rounded-full" />
 						<span className="text-slate-400  uppercase">or</span>
 						<div className="flex-grow h-1 bg-gradient-to-r from-slate-700 via-transparent to-slate-800 rounded-full" />
-					</div>
-					<button
+					</div> */}
+					{/* <button
 						className="flex items-center justify-center gap-2 bg-slate-600 rounded-md px-2 py-1 text-slate-300 font-semibold transition-all duration-300 hover:text-slate-200 hover:bg-slate-500"
 						onClick={() => {}}
 					>
 						<FcGoogle />
 						Sign up with Google
-					</button>
+					</button> */}
 					<div className="flex items-center justify-end gap-3">
 						<span className="text-slate-300">already have account?</span>
 						<button

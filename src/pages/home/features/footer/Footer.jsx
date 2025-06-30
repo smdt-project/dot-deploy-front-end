@@ -48,7 +48,7 @@ const Footer = () => {
 					</span>
 				</div>
 				<p className="text-color-5">
-					&copy; 2024 DotCode. All rights reserved.
+					&copy; 2025 DotCode. All rights reserved.
 				</p>
 			</div>
 		</footer>
